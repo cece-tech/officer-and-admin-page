@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Clearance System - Quick Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card.admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card.officer {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+        }
+        
+        .card.organization {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .card-desc {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .info {
+            background-color: #f0f4ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 30px;
+            color: #0066cc;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Student Clearance System</h1>
+        <p class="subtitle">Choose your dashboard</p>
+        
+        <div class="grid">
+            <a href="admin.html" class="card admin">
+                <div class="card-icon">👨‍💼</div>
+                <div class="card-title">Admin Dashboard</div>
+                <div class="card-desc">Manage faculty, students, approvers, and organizations</div>
+            </a>
+            
+            <a href="officer-dashboard.html" class="card officer">
+                <div class="card-icon">📋</div>
+                <div class="card-title">Officer Dashboard</div>
+                <div class="card-desc">Process clearance queue, bulk actions, and follow-ups</div>
+            </a>
+            
+            <a href="organization-dashboard.html" class="card organization">
+                <div class="card-icon">🏢</div>
+                <div class="card-title">Organization Dashboard</div>
+                <div class="card-desc">View organization details and member clearances</div>
+            </a>
+        </div>
+        
+        <div class="info">
+            ℹ️ <strong>Quick Links:</strong> All dashboards are fully functional with sample data. Use the navigation menu to explore different sections.
+        </div>
+    </div>
+</body>
+</html>

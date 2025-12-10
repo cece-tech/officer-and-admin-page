@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasurer Dashboard - Student Clearance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .dashboard {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .logo h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .search-bar-sidebar input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .search-bar-sidebar input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-item .icon {
+            margin-right: 10px;
+        }
+
+        .nav-item span:nth-child(2) {
+            flex: 1;
+        }
+
+        .chevron {
+            transition: transform 0.3s;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+            margin-left: 20px;
+        }
+
+        .submenu.active {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            padding: 10px 15px;
+            margin-bottom: 3px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .submenu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .submenu-item .icon {
+            margin-right: 8px;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 32px;
+        }
+
+        .summary-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-item .label {
+            display: block;
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .summary-item .value {
+            display: block;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .stat-icon.pending { background: #fff3cd; }
+        .stat-icon.approved { background: #d4edda; }
+        .stat-icon.warning { background: #f8d7da; }
+        .stat-icon.success { background: #d1ecf1; }
+
+        .stat-info h3 {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .stat-change.positive {
+            color: #27ae60;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-action-btn {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .quick-action-btn .icon {
+            font-size: 32px;
+        }
+
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .activity-item.approved {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .activity-item.pending {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .activity-icon {
+            font-size: 24px;
+        }
+
+        .activity-content p {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        .sanction-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sanction-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sanction-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .sanction-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .student-info h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .student-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .fee-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .fee-badge.paid {
+            background: #27ae60;
+        }
+
+        .fee-badge.partial {
+            background: #f39c12;
+        }
+
+        .activity-details {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .activity-details p {
+            font-size: 13px;
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .card-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .filters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .queue-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .queue-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .queue-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .queue-info {
+            flex: 1;
+        }
+
+        .queue-info h3 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .queue-info p {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin: 3px 0;
+        }
+
+        .queue-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .queue-actions button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .stats-grid,
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Officer Portal</h2>
+                <p>Treasurer Dashboard</p>
+            </div>
+            
+            <div class="search-bar-sidebar">
+                <input type="text" id="menuSearch" placeholder="Search menu...">
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-item active" onclick="showPage('officer-dashboard-page')">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+                
+                <div class="nav-item" onclick="toggleSubmenu('sanctionSubmenu', this)">
+                    <span class="icon">💳</span>
+                    <span>Sanction Fees</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="sanctionSubmenu">
+                    <div class="submenu-item" onclick="showPage('sanction-fees-page')">
+                        <span class="icon">📋</span>
+                        <span>All Sanctions</span>
+                    </div>
+                    <div class="submenu-item" onclick="showPage('post-sanction-page')">
+                        <span class="icon">➕</span>
+                        <span>Post New Sanction</span>
+                    </div>
+                </div>
+                
+                <div class="nav-item" onclick="toggleSubmenu('queueSubmenu', this)">
+                    <span class="icon">📋</span>
+                    <span>Clearance Queue</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="queueSubmenu">
+                    <div class="submenu-item" onclick="showPage('clearance-queue-page')">
+                        <span class="icon">⏳</span>
+                        <span>Pending Queue</span>
+                    </div>
+                </div>
+                
+                <div class="nav-item" onclick="showPage('payment-records-page')">
+                    <span class="icon">💰</span>
+                    <span>Payment Records</span>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content">
+                <div class="page-view active" id="officer-dashboard-page">
+                    <h1>Treasurer Clearance Dashboard</h1>
+                    
+                    <div class="summary-banner">
+                        <div class="summary-item">
+                            <span class="label">Total Outstanding</span>
+                            <span class="value" style="color: #e74c3c;">₱12,500</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Collected Today</span>
+                            <span class="value" style="color: #27ae60;">₱3,200</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Pending Payments</span>
+                            <span class="value">25</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Queue Status</span>
+                            <span class="value">12 pending</span>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon pending">💰</div>
+                            <div class="stat-info">
+                                <h3>Unpaid Sanctions</h3>
+                                <p class="stat-number">25</p>
+                                <span class="stat-change">₱12,500 total</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon approved">✅</div>
+                            <div class="stat-info">
+                                <h3>Paid This Week</h3>
+                                <p class="stat-number">18</p>
+                                <span class="stat-change positive">₱9,000 collected</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning">⚠️</div>
+                            <div class="stat-info">
+                                <h3>Partial Payments</h3>
+                                <p class="stat-number">8</p>
+                                <span class="stat-change">₱4,200 remaining</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success">🎯</div>
+                            <div class="stat-info">
+                                <h3>Collection Rate</h3>
+                                <p class="stat-number">78%</p>
+                                <span class="stat-change">+5% from last month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-layout">
+                        <div class="section">
+                            <div class="section-header">
+                                <h2>Payment Collection (This Week)</h2>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="approvalChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-header">
+                                <h2>Sanction Fee Overview</h2>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="queueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Quick Actions</h2>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn" onclick="showPage('post-sanction-page')">
+                                <span class="icon">➕</span>
+                                <span class="text">Post Sanction</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="showPage('sanction-fees-page')">
+                                <span class="icon">💳</span>
+                                <span class="text">View All Fees</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="alert('Record Payment feature coming soon')">
+                                <span class="icon">💵</span>
+                                <span class="text">Record Payment</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="showPage('clearance-queue-page')">
+                                <span class="icon">📋</span>
+                                <span class="text">View Queue</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Recent Activity</h2>
+                        </div>
+                        <div class="activity-feed">
+                            <div class="activity-item approved">
+                                <span class="activity-icon">💵</span>
+                                <div class="activity-content">
+                                    <p><strong>Carol Egonio</strong> - Payment Received: ₱500</p>
+                                    <span class="activity-time">5 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item pending">
+                                <span class="activity-icon">➕</span>
+                                <div class="activity-content">
+                                    <p><strong>Maria Santos</strong> - Sanction Fee Posted: ₱500</p>
+                                    <span class="activity-time">12 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item approved">
+                                <span class="activity-icon">✓</span>
+                                <div class="activity-content">
+                                    <p><strong>John Doe</strong> - Clearance Approved</p>
+                                    <span class="activity-time">25 minutes ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-view" id="sanction-fees-page">
+                    <h1>Sanction Fees Management</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Students with Sanction Fees</h2>
+                            <button class="btn-primary" onclick="showPage('post-sanction-page')">➕ Post New Sanction</button>
+                        </div>
+
+                        <div class="filters-container">
+                            <div class="filter-group">
+                                <label>Search</label>
+                                <input type="text" placeholder="Student ID, Name...">
+                            </div>
+                            <div class="filter-group">
+                                <label>Payment Status</label>
+                                <select>
+                                    <option>All Status</option>
+                                    <option>Unpaid</option>
+                                    <option>Partial</option>
+                                    <option>Paid</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sanction-cards">
+                            <div class="sanction-card">
+                                <div class="sanction-card-header">
+                                    <div class="student-info">
+                                        <h3>John Doe</h3>
+                                        <p>2021-12345 • BSIT 3rd Year</p>
+                                    </div>
+                                    <div class="fee-badge">₱500</div>
+                                </div>
+                                <div class="activity-details">
+                                    <p><strong>Activity:</strong> General Assembly</p>
+                                    <p><strong>Date:</strong> December 1, 2025</p>
+                                    <p><strong>Reason:</strong> Did Not Attend</p>
+                                    <p><strong>Due Date:</strong> December 15, 2025</p>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-success">Record Payment</button>
+                                    <button class="btn-secondary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-view" id="post-sanction-page">
+                    <h1>Post New Sanction Fee</h1>
+                    
+                    <div class="section">
+                        <form id="sanctionForm" onsubmit="postSanction(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Student ID *</label>
+                                    <input type="text" required placeholder="e.g., 2021-12345">
+                                </div>
+                                <div class="form-group">
+                                    <label>Student Name *</label>
+                                    <input type="text" required placeholder="Full Name">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Program *</label>
+                                    <select required>
+                                        <option value="">Select Program</option>
+                                        <option>BSIT</option>
+                                        <option>BSCS</option>
+                                        <option>BSCE</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Year Level *</label>
+                                    <select required>
+                                        <option value="">Select Year</option>
+                                        <option>1st Year</option>
+                                        <option>2nd Year</option>
+                                        <option>3rd Year</option>
+                                        <option>4th Year</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Activity Name *</label>
+                                <input type="text" required placeholder="e.g., General Assembly">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Activity Date *</label>
+                                <input type="date" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Sanction Amount (₱) *</label>
+                                    <input type="number" required min="0" step="0.01" placeholder="500.00">
+                                </div>
+                                <div class="form-group">
+                                    <label>Due Date</label>
+                                    <input type="date">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Reason for Absence/Sanction *</label>
+                                <select required>
+                                    <option value="">Select Reason</option>
+                                    <option>Did Not Attend</option>
+                                    <option>Late Arrival (30+ minutes)</option>
+                                    <option>Early Departure</option>
+                                    <option>No Excuse Letter</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Additional Notes</label>
+                                <textarea placeholder="Any additional information..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn-primary">Post Sanction Fee</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="page-view" id="clearance-queue-page">
+                    <h1>Clearance Queue</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Students Pending Clearance</h2>
+                        </div>
+
+                        <div class="filters-container">
+                            <div class="filter-group">
+                                <label>Search</label>
+                                <input type="text" placeholder="Student ID, Name...">
+                            </div>
+                            <div class="filter-group">
+                                <label>Program</label>
+                                <select>
+                                    <option>All Programs</option>
+                                    <option>BSIT</option>
+                                    <option>BSCS</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="queue-list">
+                            <div class="queue-item">
+                                <div class="queue-info">
+                                    <h3>Maria Santos</h3>
+                                    <p>2021-67890 • BSCS 2nd Year</p>
+                                    <p>Submitted: December 8, 2025</p>
+                                </div>
+                                <div class="queue-actions">
+                                    <button class="btn-success">Approve</button>
+                                    <button class="btn-secondary">Reject</button>
+                                    <button class="btn-secondary">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-view" id="payment-records-page">
+                    <h1>Payment Records</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Transaction History</h2>
+                            <button class="btn-primary">📥 Export Records</button>
+                        </div>
+
+                        <div class="filters-container">
+                            <div class="filter-group">
+                                <label>Search</label>
+                                <input type="text" placeholder="Student, Transaction ID...">
+                            </div>
+                            <div class="filter-group">
+                                <label>Date Range</label>
+                                <select>
+                                    <option>All Time</option>
+                                    <option>Today</option>
+                                    <option>This Week</option>
+                                    <option>This Month</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="payment-history">
+                            <div class="payment-item">
+                                <div class="payment-info">
+                                    <p><strong>Carol Egonio</strong> - 2021-54321</p>
+                                    <p>General Assembly Fee</p>
+                                    <span class="activity-time">December 9, 2025 - 2:30 PM</span>
+                                </div>
+                                <div class="payment-amount">₱500</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+
+        function toggleSubmenu(submenuId, navItem) {
+            const submenu = document.getElementById(submenuId);
+            submenu.classList.toggle('active');
+            const chevron = navItem.querySelector('.chevron');
+            if (chevron) {
+                chevron.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        function postSanction(e) {
+            e.preventDefault();
+            alert('Sanction fee posted successfully!');
+            showPage('sanction-fees-page');
+        }
+
+        // Initialize Charts
+        window.addEventListener('DOMContentLoaded', () => {
+            const approvalCtx = document.getElementById('approvalChart');
+            if (approvalCtx) {
+                new Chart(approvalCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Payments Collected',
+                            data: [1200, 1900, 1500, 2100, 1800, 2400, 3200],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₱' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const queueCtx = document.getElementById('queueChart');
+            if (queueCtx) {
+                new Chart(queueCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Unpaid', 'Partial', 'Paid'],
+                        datasets: [{
+                            data: [25, 8, 18],
+                            backgroundColor: ['#e74c3c', '#f39c12', '#27ae60']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

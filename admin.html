@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Clearance System - Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background-color: #1e7e34;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .search-bar-sidebar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar-sidebar input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 14px;
+        }
+
+        .search-bar-sidebar input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-item .icon {
+            font-size: 20px;
+        }
+
+        .nav-item .chevron {
+            margin-left: auto;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .nav-item.expanded .chevron {
+            transform: rotate(180deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-left: 20px;
+        }
+
+        .submenu.show {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submenu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .submenu-item .icon {
+            font-size: 16px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar input {
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            width: 350px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .notification-badge {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 40px;
+        }
+
+        .content h1 {
+            font-size: 32px;
+            color: #1e7e34;
+            margin-bottom: 30px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.pending {
+            background-color: #fff3cd;
+        }
+
+        .stat-icon.approved {
+            background-color: #d4edda;
+        }
+
+        .stat-icon.warning {
+            background-color: #f8d7da;
+        }
+
+        .stat-icon.success {
+            background-color: #d1ecf1;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-info h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e7e34;
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        /* Grid Layout */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Section */
+        .section {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            color: #1e7e34;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-approve {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-approve:hover {
+            background-color: #218838;
+        }
+
+        .btn-view {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-view:hover {
+            background-color: #e2e6ea;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        /* Clearance List */
+        .clearance-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .clearance-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s;
+        }
+
+        .clearance-item:hover {
+            background-color: #e8f5e9;
+        }
+
+        .clearance-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .user-id {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .clearance-status {
+            flex: 1;
+            text-align: center;
+        }
+
+        .clearance-date {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .clearance-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.review {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge.approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge.rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Department List */
+        .department-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .department-item {
+            padding: 16px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .dept-info h4 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .dept-info p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .dept-percentage {
+            font-size: 13px;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding: 20px 0;
+            gap: 10px;
+        }
+
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 60px;
+            background: linear-gradient(to top, #28a745, #20c997);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: translateY(-5px);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e7e34;
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Audit Logs */
+        .audit-log {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-content p {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .log-content small {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table thead {
+            background-color: #f8f9fa;
+        }
+
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e7e34;
+            font-size: 14px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #1e7e34;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .search-bar input {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .clearance-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .clearance-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Clearance System</h2>
+                <p>Admin Portal</p>
+            </div>
+            
+            <div class="search-bar-sidebar">
+                <input type="text" id="menuSearch" placeholder="Search menu...">
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-item active" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+                
+                <div class="nav-item" data-page="faculty">
+                    <span class="icon">👨‍🏫</span>
+                    <span>Faculty</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="facultySubmenu">
+                    <div class="submenu-item" data-action="faculty-list">
+                        <span class="icon">📋</span>
+                        <span>Faculty List</span>
+                    </div>
+                    <div class="submenu-item" data-action="add-faculty">
+                        <span class="icon">➕</span>
+                        <span>Add Faculty</span>
+                    </div>
+                </div>
+                
+                <div class="nav-item" data-page="student">
+                    <span class="icon">🎓</span>
+                    <span>Student</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="studentSubmenu">
+                    <div class="submenu-item" data-action="student-clearance">
+                        <span class="icon">📋</span>
+                        <span>Student Clearance</span>
+                    </div>
+                    <div class="submenu-item" data-action="student-personal">
+                        <span class="icon">👥</span>
+                        <span>Student Personal Data</span>
+                    </div>
+                </div>
+                
+                <div class="nav-item" data-page="approver">
+                    <span class="icon">✅</span>
+                    <span>Clearance Approver</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="approverSubmenu">
+                    <div class="submenu-item" data-action="approver-list">
+                        <span class="icon">📋</span>
+                        <span>Clearance List</span>
+                    </div>
+                    <div class="submenu-item" data-action="add-approver">
+                        <span class="icon">➕</span>
+                        <span>Add Approver</span>
+                    </div>
+                </div>
+                
+                <div class="nav-item" data-page="organization">
+                    <span class="icon">🏢</span>
+                    <span>Organization</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="organizationSubmenu">
+                    <div class="submenu-item" data-action="organization-list">
+                        <span class="icon">📋</span>
+                        <span>Organization List</span>
+                    </div>
+                    <div class="submenu-item" data-action="add-organization">
+                        <span class="icon">➕</span>
+                        <span>Add Organization</span>
+                    </div>
+                </div>
+                
+                <div class="nav-item" data-page="settings">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="submenu" id="settingsSubmenu">
+                    <div class="submenu-item" data-action="profile">
+                        <span class="icon">👤</span>
+                        <span>Profile</span>
+                    </div>
+                    <div class="submenu-item" data-action="logout" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>Log Out</span>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div class="page-view active" id="dashboardPage">
+                    <h1>Clearance Dashboard</h1>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon pending">📋</div>
+                            <div class="stat-info">
+                                <h3>Pending Requests</h3>
+                                <p class="stat-number" id="pendingCount">48</p>
+                                <span class="stat-change">Awaiting approval</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon approved">✅</div>
+                            <div class="stat-info">
+                                <h3>Completed</h3>
+                                <p class="stat-number" id="completedCount">40%</p>
+                                <span class="stat-change positive">+15% from yesterday</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning">⚠️</div>
+                            <div class="stat-info">
+                                <h3>Rejected</h3>
+                                <p class="stat-number" id="rejectedCount">7</p>
+                                <span class="stat-change negative">Requires attention</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success">🎓</div>
+                            <div class="stat-info">
+                                <h3>Total Students</h3>
+                                <p class="stat-number" id="totalStudents">1,245</p>
+                                <span class="stat-change positive">+22 this week</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Audit -->
+                    <div class="grid-layout">
+                        <!-- Clearance Metrics Bar Graph -->
+                        <div class="section">
+                            <div class="section-header">
+                                <h2>Clearance Metrics</h2>
+                                <button class="btn-primary" onclick="exportPDF('dashboard')">📥 Export PDF</button>
+                            </div>
+                            <div class="bar-chart" id="barChart"></div>
+                        </div>
+
+                        <!-- Audit Logs -->
+                        <div class="section">
+                            <div class="section-header">
+                                <h2>Recent Audit Logs</h2>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table class="data-table" style="min-width: 800px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Officer</th>
+                                            <th>Student Name</th>
+                                            <th>Status</th>
+                                            <th>Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="auditLogs">
+                                        <tr>
+                                            <td>Officer Treasurer</td>
+                                            <td>Egonio, Carol Jean</td>
+                                            <td><span class="badge" style="background-color: #90EE90; color: #000;">✓ DONE</span></td>
+                                            <td>2 minutes ago</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Officer Adviser</td>
+                                            <td>Batula, Felizardo</td>
+                                            <td><span class="badge" style="background-color: #FFA500; color: #FFF;">⏳ PENDING</span></td>
+                                            <td>15 minutes ago</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Librarian</td>
+                                            <td>Doe, John</td>
+                                            <td><span class="badge" style="background-color: #FF6B6B; color: #FFF;">✕ REJECTED</span></td>
+                                            <td>1 hour ago</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Year Level Treasurer</td>
+                                            <td>De la Cruz, Juan</td>
+                                            <td><span class="badge" style="background-color: #90EE90; color: #000;">✓ DONE</span></td>
+                                            <td>2 hours ago</td>
+                                        </tr>
+                                        <tr>
+                                            <td>VPSD</td>
+                                            <td>Daga, Shan Riczen</td>
+                                            <td><span class="badge" style="background-color: #90EE90; color: #000;">✓ DONE</span></td>
+                                            <td>3 hours ago</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Stats -->
+                    <div class="stats-grid" style="margin-top: 24px;">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: #d1ecf1;">⏱️</div>
+                            <div class="stat-info">
+                                <h3>Avg. Time-to-Clear</h3>
+                                <p class="stat-number" id="avgTime">3.5 days</p>
+                                <span class="stat-change">Business days</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: #fff3cd;">🏢</div>
+                            <div class="stat-info">
+                                <h3>Total Organizations</h3>
+                                <p class="stat-number" id="totalOrgs">12</p>
+                                <span class="stat-change">Active departments</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: #d4edda;">💰</div>
+                            <div class="stat-info">
+                                <h3>Treasurer Clearances</h3>
+                                <p class="stat-number" id="treasurerCount">89</p>
+                                <span class="stat-change">Pending review</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department Status -->
+                    <div class="section" style="margin-top: 24px;">
+                        <div class="section-header">
+                            <h2>Department Status</h2>
+                        </div>
+                        <div class="department-list">
+                            <div class="department-item">
+                                <div class="dept-info">
+                                    <h4>Registrar's Office</h4>
+                                    <p>12 pending clearances</p>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                                <span class="dept-percentage">85% cleared</span>
+                            </div>
+                            <div class="department-item">
+                                <div class="dept-info">
+                                    <h4>Library</h4>
+                                    <p>5 pending clearances</p>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                                <span class="dept-percentage">92% cleared</span>
+                            </div>
+                            <div class="department-item">
+                                <div class="dept-info">
+                                    <h4>Finance Office</h4>
+                                    <p>18 pending clearances</p>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 73%"></div>
+                                </div>
+                                <span class="dept-percentage">73% cleared</span>
+                            </div>
+                            <div class="department-item">
+                                <div class="dept-info">
+                                    <h4>Student Affairs</h4>
+                                    <p>8 pending clearances</p>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 88%"></div>
+                                </div>
+                                <span class="dept-percentage">88% cleared</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Faculty Page -->
+                <div class="page-view" id="facultyPage">
+                    <h1>Faculty Management</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Faculty List</h2>
+                            <button class="btn-primary" onclick="openModal('addFacultyModal')">➕ Add Faculty</button>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div class="search-bar">
+                                <input type="text" id="facultySearch" placeholder="Search by name or email..." onkeyup="filterFaculty()">
+                            </div>
+                            <select id="facultyDepartmentFilter" onchange="filterFaculty()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Departments</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Business">Business Administration</option>
+                            </select>
+                            <select id="facultyApproverFilter" onchange="filterFaculty()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Status</option>
+                                <option value="Yes">Approver</option>
+                                <option value="No">Non-Approver</option>
+                            </select>
+                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Email</th>
+                                    <th>Approver</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="facultyTableBody">
+                                <tr>
+                                    <td>FAC-001</td>
+                                    <td>Dr. Juan Dela Cruz</td>
+                                    <td>Information Technology</td>
+                                    <td>juan.delacruz@lnu.edu.ph</td>
+                                    <td><span class="badge approved">Yes</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewFaculty('FAC-001')">View</button>
+                                        <button class="btn-warning" onclick="editFaculty('FAC-001')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteFaculty('FAC-001')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>FAC-002</td>
+                                    <td>Prof. Maria Santos</td>
+                                    <td>Computer Science</td>
+                                    <td>maria.santos@lnu.edu.ph</td>
+                                    <td><span class="badge pending">No</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewFaculty('FAC-002')">View</button>
+                                        <button class="btn-warning" onclick="editFaculty('FAC-002')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteFaculty('FAC-002')">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Student Page -->
+                <div class="page-view" id="studentPage" >
+                    <h1>Student Management</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Student Clearance</h2>
+                            <button class="btn-primary" onclick="openModal('addStudentModal')">➕ Add Student</button>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div class="search-bar">
+                                <input type="text" id="studentSearch" placeholder="Student ID, Name..." onkeyup="filterStudents()">
+                            </div>
+                            <select id="studentYearFilter" onchange="filterStudents()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Years</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                            <select id="studentSemesterFilter" onchange="filterStudents()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Semesters</option>
+                                <option value="1">1st Semester</option>
+                                <option value="2">2nd Semester</option>
+                            </select>
+                            <select id="studentCourseFilter" onchange="filterStudents()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Programs</option>
+                                <option value="BSIT">BSIT</option>
+                                <option value="BSCS">BSCS</option>
+                                <option value="BSCE">BSCE</option>
+                            </select>
+                            <select id="studentStatusFilter" onchange="filterStudents()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Status</option>
+                                <option value="complete">Complete</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="data-table" style="min-width: 1400px;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 30px;">
+                                            <input type="checkbox" id="selectAll">
+                                        </th>
+                                        <th>Student ID</th>
+                                        <th>Student Name</th>
+                                        <th>Program & Section</th>
+                                        <th>College</th>
+                                        <th>Officer Treasurer</th>
+                                        <th>Officer Adviser</th>
+                                        <th>Librarian</th>
+                                        <th>Year Level Treasurer</th>
+                                        <th>VPSD</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTableBody">
+                                    <tr>
+                                        <td><input type="checkbox" class="row-checkbox"></td>
+                                        <td>2301436</td>
+                                        <td>Egonio, Carol Jean</td>
+                                        <td>BSIT - AI33</td>
+                                        <td>CAS</td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge">
+                                            <select id="pendingFilter" class="form-group" style="width: auto; padding: 8px;">
+                                            <option value="">PENDING</option>
+                                            <option value="1">DONE</option>
+                                            <option value="2">REJECTED</option>
+                                            </select></span></td>
+                                        <td>
+                                            <button class="btn-primary" onclick="openCommentModal('2301436', 'Egonio, Carol Jean')">💬 Comments</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="row-checkbox"></td>
+                                        <td>2301536</td>
+                                        <td>De la Cruz, Juan</td>
+                                        <td>BSCS - MC312</td>
+                                        <td>CAS</td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #FFA500; color: #FFF;">PENDING</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" >
+                                            <select id="pendingFilter" class="form-group" style="width: auto; padding: 8px;">
+                                            <option value="">PENDING</option>
+                                            <option value="1">DONE</option>
+                                            <option value="2">REJECTED</option>
+                                            </select>
+                                        </span></td>
+                                        <td>
+                                            <button class="btn-primary" onclick="openCommentModal('2301536', 'De la Cruz, Juan')">💬 Comments</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="row-checkbox"></td>
+                                        <td>2301636</td>
+                                        <td>Doe, John</td>
+                                        <td>BSIT - AI31</td>
+                                        <td>CAS</td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #FF6B6B; color: #FFF;">REJECT</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" >
+                                            <select id="pendingFilter" class="form-group" style="width: auto; padding: 8px;">
+                                            <option value="">PENDING</option>
+                                            <option value="1">DONE</option>
+                                            <option value="2">REJECTED</option>
+                                            </select>
+                                        </span></td>
+                                        <td>
+                                            <button class="btn-primary" onclick="openCommentModal('2301636', 'Doe, John')">💬 Comments</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="row-checkbox"></td>
+                                        <td>2021-00123</td>
+                                        <td>Batula, Felizardo</td>
+                                        <td>BSIT - AI33</td>
+                                        <td>CAS</td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #FFA500; color: #FFF;">PENDING</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #FFA500; color: #FFF;">PENDING</span></td>
+                                        <td><span class="badge">
+                                            <select id="pendingFilter" class="form-group" style="width: auto; padding: 8px;">
+                                            <option value="">PENDING</option>
+                                            <option value="1">DONE</option>
+                                            <option value="2">REJECTED</option>
+                                            </select>
+                                        </span></td>
+                                        <td>
+                                            <button class="btn-primary" onclick="openCommentModal('2021-00123', 'Batula, Felizardo')">💬 Comments</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="row-checkbox"></td>
+                                        <td>2021-00456</td>
+                                        <td>Daga, Shan Riczen</td>
+                                        <td>BSIT - AI33</td>
+                                        <td>CAS</td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge" style="background-color: #90EE90; color: #000;">DONE</span></td>
+                                        <td><span class="badge">
+                                            <select id="pendingFilter" class="form-group" style="width: auto; padding: 8px;">
+                                            <option value="">PENDING</option>
+                                            <option value="1">DONE</option>
+                                            <option value="2">REJECTED</option>
+                                            </select>
+                                        </span></td>
+                                        <td>
+                                            <button class="btn-primary" onclick="openCommentModal('2021-00456', 'Daga, Shan Riczen')">💬 Comments</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Personal Data Page -->
+                <div class="page-view" id="studentPersonalPage">
+                    <h1>Student Personal Data</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Student Information</h2>
+                            <button class="btn-primary" onclick="openModal('addStudentModal')">➕ Add Student</button>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div class="search-bar">
+                                <input type="text" id="personalDataSearch" placeholder="Student ID, Name, Email..." onkeyup="filterPersonalData()">
+                            </div>
+                            <select id="personalDataCourseFilter" onchange="filterPersonalData()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Programs</option>
+                                <option value="BSIT">BSIT</option>
+                                <option value="BSCS">BSCS</option>
+                                <option value="BSCE">BSCE</option>
+                            </select>
+                            <select id="personalDataYearFilter" onchange="filterPersonalData()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Year Levels</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                        </div>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Student Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Parent/Guardian Name</th>
+                                        <th>Home Address</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentPersonalTableBody">
+                                    <tr>
+                                        <td>2301436</td>
+                                        <td>Egonio, Carol Jean</td>
+                                        <td>carol.egonio@student.lnu.edu.ph</td>
+                                        <td>+63 912 345 6789</td>
+                                        <td>Maria Egonio</td>
+                                        <td>123 Main St, Bacolod City</td>
+                                        <td>
+                                            <select class="btn-view" onchange="handleStudentAction(this.value, '2301436')" style="cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #dee2e6; background-color: #f8f9fa;">
+                                                <option value="">Select Action</option>
+                                                <option value="view">View</option>
+                                                <option value="edit">Edit</option>
+                                                <option value="delete">Delete</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2301536</td>
+                                        <td>De la Cruz, Juan</td>
+                                        <td>juan.delacruz@student.lnu.edu.ph</td>
+                                        <td>+63 912 345 6790</td>
+                                        <td>Roberto De la Cruz</td>
+                                        <td>456 Oak Ave, Bacolod City</td>
+                                        <td>
+                                            <select class="btn-view" onchange="handleStudentAction(this.value, '2301536')" style="cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #dee2e6; background-color: #f8f9fa;">
+                                                <option value="">Select Action</option>
+                                                <option value="view">View</option>
+                                                <option value="edit">Edit</option>
+                                                <option value="delete">Delete</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2301636</td>
+                                        <td>Doe, John</td>
+                                        <td>john.doe@student.lnu.edu.ph</td>
+                                        <td>+63 912 345 6791</td>
+                                        <td>Jane Doe</td>
+                                        <td>789 Pine Rd, Bacolod City</td>
+                                        <td>
+                                            <select class="btn-view" onchange="handleStudentAction(this.value, '2301636')" style="cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #dee2e6; background-color: #f8f9fa;">
+                                                <option value="">Select Action</option>
+                                                <option value="view">View</option>
+                                                <option value="edit">Edit</option>
+                                                <option value="delete">Delete</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2021-00123</td>
+                                        <td>Batula, Felizardo</td>
+                                        <td>felizardo.batula@student.lnu.edu.ph</td>
+                                        <td>+63 912 345 6792</td>
+                                        <td>Antonio Batula</td>
+                                        <td>321 Elm St, Bacolod City</td>
+                                        <td>
+                                            <select class="btn-view" onchange="handleStudentAction(this.value, '2021-00123')" style="cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #dee2e6; background-color: #f8f9fa;">
+                                                <option value="">Select Action</option>
+                                                <option value="view">View</option>
+                                                <option value="edit">Edit</option>
+                                                <option value="delete">Delete</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2021-00456</td>
+                                        <td>Daga, Shan Riczen</td>
+                                        <td>shan.daga@student.lnu.edu.ph</td>
+                                        <td>+63 912 345 6793</td>
+                                        <td>Grace Daga</td>
+                                        <td>654 Maple Ln, Bacolod City</td>
+                                        <td>
+                                            <select class="btn-view" onchange="handleStudentAction(this.value, '2021-00456')" style="cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #dee2e6; background-color: #f8f9fa;">
+                                                <option value="">Select Action</option>
+                                                <option value="view">View</option>
+                                                <option value="edit">Edit</option>
+                                                <option value="delete">Delete</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-view" id="approverPage">
+                    <h1>Clearance Approver Management</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Clearance Approver List</h2>
+                            <button class="btn-primary" onclick="openModal('addApproverModal')">➕ Add Approver</button>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div class="search-bar">
+                                <input type="text" id="approverSearch" placeholder="Search name or organization..." onkeyup="filterApprovers()">
+                            </div>
+                            <select id="approverRoleTypeFilter" onchange="filterApprovers()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Role Types</option>
+                                <option value="Student Leader">Student Leader</option>
+                                <option value="Faculty Adviser">Faculty Adviser</option>
+                            </select>
+                            <select id="approverOrganizationFilterDropdown" onchange="filterApprovers()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Organizations</option>
+                                <option value="BSIT Digits Organization">BSIT Digits Organization</option>
+                                <option value="BSCS Tech Society">BSCS Tech Society</option>
+                                <option value="BSCE Engineers Club">BSCE Engineers Club</option>
+                            </select>
+                            <select id="approverStatusFilter" onchange="filterApprovers()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Title</th>
+                                    <th>Department</th>
+                                    <th>Assigned to Organization</th>
+                                    <th>Role</th>
+                                    <th>Role Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approverTableBody">
+                                <tr>
+                                    <td>APR-001</td>
+                                    <td>Ramon Cruz</td>
+                                    <td>Student</td>
+                                    <td>Information Technology</td>
+                                    <td>BSIT Digits Organization</td>
+                                    <td><span class="badge badge-warning">Student President</span></td>
+                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-001')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-001')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-001')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-002</td>
+                                    <td>John Doe</td>
+                                    <td>Student</td>
+                                    <td>Information Technology</td>
+                                    <td>BSIT Digits Organization</td>
+                                    <td><span class="badge badge-warning">Student Treasurer</span></td>
+                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-002')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-002')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-002')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-003</td>
+                                    <td>Juan Dela Cruz</td>
+                                    <td>Student</td>
+                                    <td>Computer Science</td>
+                                    <td>BSCS Tech Society</td>
+                                    <td><span class="badge badge-warning">Student President</span></td>
+                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-003')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-003')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-003')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-004</td>
+                                    <td>David Lopez</td>
+                                    <td>Student</td>
+                                    <td>Computer Science</td>
+                                    <td>BSCS Tech Society</td>
+                                    <td><span class="badge badge-warning">Student Treasurer</span></td>
+                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-004')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-004')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-004')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-005</td>
+                                    <td>Miguel Rodriguez</td>
+                                    <td>Student</td>
+                                    <td>Civil Engineering</td>
+                                    <td>BSCE Engineers Club</td>
+                                    <td><span class="badge badge-warning">Student President</span></td>
+                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-005')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-005')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-005')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-006</td>
+                                    <td>Carlos Mendez</td>
+                                    <td>Student</td>
+                                    <td>Civil Engineering</td>
+                                    <td>BSCE Engineers Club</td>
+                                    <td><span class="badge badge-warning">Student Treasurer</span></td>
+                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-006')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-006')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-006')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-007</td>
+                                    <td>Prof. Allen Chen</td>
+                                    <td>Faculty</td>
+                                    <td>Information Technology</td>
+                                    <td>BSIT Digits Organization</td>
+                                    <td><span class="badge badge-success">Faculty Adviser</span></td>
+                                    <td><span class="badge badge-secondary">Faculty Adviser (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-007')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-007')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-007')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-008</td>
+                                    <td>Dr. Jessica Wong</td>
+                                    <td>Faculty</td>
+                                    <td>Computer Science</td>
+                                    <td>BSCS Tech Society</td>
+                                    <td><span class="badge badge-success">Faculty Adviser</span></td>
+                                    <td><span class="badge badge-secondary">Faculty Adviser (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-008')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-008')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-008')">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APR-009</td>
+                                    <td>Engr. Michael Torres</td>
+                                    <td>Faculty</td>
+                                    <td>Civil Engineering</td>
+                                    <td>BSCE Engineers Club</td>
+                                    <td><span class="badge badge-success">Faculty Adviser</span></td>
+                                    <td><span class="badge badge-secondary">Faculty Adviser (Auto-Approver)</span></td>
+                                    <td><span class="badge approved">Active</span></td>
+                                    <td>
+                                        <button class="btn-view" onclick="viewApprover('APR-009')">View</button>
+                                        <button class="btn-warning" onclick="editApprover('APR-009')">Edit</button>
+                                        <button class="btn-danger" onclick="deleteApprover('APR-009')">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Organization Page -->
+                <div class="page-view" id="organizationPage">
+                    <h1>Student Organization Management</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Student Organizations by Program</h2>
+                            <button class="btn-primary" onclick="openModal('addOrganizationModal')">➕ Add Organization</button>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div class="search-bar">
+                                <input type="text" id="organizationSearch" placeholder="Search organization or adviser..." onkeyup="filterOrganizations()">
+                            </div>
+                            <select id="organizationProgramFilter" onchange="filterOrganizations()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Programs</option>
+                                <option value="BSIT">BSIT</option>
+                                <option value="BSCS">BSCS</option>
+                                <option value="BSCE">BSCE</option>
+                            </select>
+                            <select id="organizationSizeFilter" onchange="filterOrganizations()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
+                                <option value="">All Sizes</option>
+                                <option value="small">Small (&lt;30)</option>
+                                <option value="medium">Medium (30-45)</option>
+                                <option value="large">Large (&gt;45)</option>
+                            </select>
+                        </div>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Program</th>
+                                        <th>Organization Name</th>
+                                        <th>Student President</th>
+                                        <th>Student Treasurer</th>
+                                        <th>Vice President</th>
+                                        <th>Secretary</th>
+                                        <th>Faculty Adviser</th>
+                                        <th>Members Count</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="organizationTableBody">
+                                    <tr>
+                                        <td>BSIT</td>
+                                        <td>BSIT Digits Organization</td>
+                                        <td>Ramon Cruz</td>
+                                        <td>John Doe</td>
+                                        <td>Maria Santos</td>
+                                        <td>Carol Egonio</td>
+                                        <td><span class="badge badge-success">Prof. Allen Chen</span></td>
+                                        <td>45</td>
+                                        <td>
+                                            <button class="btn-view" onclick="viewOrganization('BSIT-001')">View</button>
+                                            <button class="btn-warning" onclick="editOrganization('BSIT-001')">Edit</button>
+                                            <button class="btn-danger" onclick="deleteOrganization('BSIT-001')">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>BSCS</td>
+                                        <td>BSCS Tech Society</td>
+                                        <td>Juan Dela Cruz</td>
+                                        <td>David Lopez</td>
+                                        <td>Anna Garcia</td>
+                                        <td>Isabel Martinez</td>
+                                        <td><span class="badge badge-success">Dr. Jessica Wong</span></td>
+                                        <td>38</td>
+                                        <td>
+                                            <button class="btn-view" onclick="viewOrganization('BSCS-001')">View</button>
+                                            <button class="btn-warning" onclick="editOrganization('BSCS-001')">Edit</button>
+                                            <button class="btn-danger" onclick="deleteOrganization('BSCS-001')">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>BSCE</td>
+                                        <td>BSCE Engineers Club</td>
+                                        <td>Miguel Rodriguez</td>
+                                        <td>Carlos Mendez</td>
+                                        <td>Sofia Reyes</td>
+                                        <td>Elena Diaz</td>
+                                        <td><span class="badge badge-success">Engr. Michael Torres</span></td>
+                                        <td>52</td>
+                                        <td>
+                                            <button class="btn-view" onclick="viewOrganization('BSCE-001')">View</button>
+                                            <button class="btn-warning" onclick="editOrganization('BSCE-001')">Edit</button>
+                                            <button class="btn-danger" onclick="deleteOrganization('BSCE-001')">Delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page-view" id="settingsPage">
+                    <h1>Settings</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Profile Settings</h2>
+                        </div>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" value="Admin User" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" value="admin@lnu.edu.ph" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" value="+63 912 345 6789">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Profile</button>
+                        </form>
+                    </div>
+                    
+                    <div class="section" style="margin-top: 24px;">
+                        <div class="section-header">
+                            <h2>Clearance Configuration</h2>
+                        </div>
+                        <form id="clearanceConfigForm">
+                            <div class="form-group">
+                                <label>Default Clearance Requirements</label>
+                                <textarea placeholder="List default clearance requirements...">Library Clearance
+Registrar Clearance
+Treasurer Clearance
+Dean's Clearance
+Student Affairs Clearance</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Auto-Approval Threshold (days)</label>
+                                <input type="number" value="7" min="1">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Faculty Modal -->
+    <div class="modal" id="addFacultyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Faculty</h2>
+                <button class="close-modal" onclick="closeModal('addFacultyModal')">&times;</button>
+            </div>
+            <form id="addFacultyForm">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Department *</label>
+                    <select required>
+                        <option value="">Select Department</option>
+                        <option value="IT">Information Technology</option>
+                        <option value="CS">Computer Science</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Business">Business Administration</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" required placeholder="faculty@lnu.edu.ph">
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" required placeholder="**********">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" placeholder="+63 912 345 6789">
+                </div>
+                <div class="form-group">
+                    <label>Permission to be Approver</label>
+                    <select required>
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Save Faculty</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Student</h2>
+                <button class="close-modal" onclick="closeModal('addStudentModal')">&times;</button>
+            </div>
+            <form id="addStudentForm">
+                <div class="form-group">
+                    <label>Student ID *</label>
+                    <input type="text" required placeholder="2024-00001">
+                </div>
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Year Level *</label>
+                    <select required>
+                        <option value="">Select Year</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Semester *</label>
+                    <select required>
+                        <option value="">Select Semester</option>
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Course *</label>
+                    <select required>
+                        <option value="">Select Course</option>
+                        <option value="BSIT">BS Information Technology</option>
+                        <option value="BSCS">BS Computer Science</option>
+                        <option value="BSCE">BS Computer Engineering</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Program *</label>
+                    <input type="text" required placeholder="Enter program/specialization">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="student@lnu.edu.ph">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="email" placeholder="**********">
+                </div>
+                <button type="submit" class="btn-primary">Save Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Approver Modal -->
+    <div class="modal" id="addApproverModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Clearance Approver</h2>
+                <button class="close-modal" onclick="closeModal('addApproverModal')">&times;</button>
+            </div>
+            <form id="addApproverForm">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" required placeholder="e.g., Dr., Prof., Engr.">
+                </div>
+                <div class="form-group">
+                    <label>Department *</label>
+                    <select required>
+                        <option value="">Select Department</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Software Engineering">Software Engineering</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Registrar">Registrar's Office</option>
+                        <option value="Treasurer">Treasurer's Office</option>
+                        <option value="Dean">Dean's Office</option>
+                        <option value="Student Affairs">Student Affairs</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" required placeholder="approver@lnu.edu.ph">
+                </div>
+                <div class="form-group">
+                    <label>Role *</label>
+                    <select required id="approverRoleSelect" onchange="updateRoleType(this.value)">
+                        <option value="">Select Role</option>
+                        <option value="Faculty Adviser">Faculty Adviser (Auto-Approver)</option>
+                    </select>
+                </div>
+                <div id="organizationFields" style="display: none;">
+                    <div class="form-group">
+                        <label>Assigned to Organization *</label>
+                        <select id="approverOrganizationSelect">
+                            <option value="">Select Organization</option>
+                            <option value="BSIT Digits Organization">BSIT Digits Organization</option>
+                            <option value="BSCS Tech Society">BSCS Tech Society</option>
+                            <option value="BSCE Engineers Club">BSCE Engineers Club</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Save Approver</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Organization Modal -->
+    <div class="modal" id="addOrganizationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Student Organization</h2>
+                <button class="close-modal" onclick="closeModal('addOrganizationModal')">&times;</button>
+            </div>
+            <form id="addOrganizationForm">
+                <div class="form-group">
+                    <label>Program *</label>
+                    <select required>
+                        <option value="">Select Program</option>
+                        <option value="BSIT">BSIT (Bachelor of Science in Information Technology)</option>
+                        <option value="BSCS">BSCS (Bachelor of Science in Computer Science)</option>
+                        <option value="BSCE">BSCE (Bachelor of Science in Computer Engineering)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Organization Name *</label>
+                    <input type="text" required placeholder="e.g., DIGITS Organization">
+                </div>
+                <div class="form-group">
+                    <label>Student President *</label>
+                    <input type="text" required placeholder="Enter student president name">
+                </div>
+                <div class="form-group">
+                    <label>Student Vice President *</label>
+                    <input type="text" required placeholder="Enter student vice president name">
+                </div>
+                <div class="form-group">
+                    <label>Student Treasurer *</label>
+                    <input type="text" required placeholder="Enter student treasurer name">
+                </div>
+                <div class="form-group">
+                    <label>Student Secretary *</label>
+                    <input type="text" required placeholder="Enter student secretary name">
+                </div>
+                <div class="form-group">
+                    <label>Faculty Adviser *</label>
+                    <input type="text" required placeholder="Enter faculty adviser name">
+                </div>
+                <div class="form-group">
+                    <label>Total Members</label>
+                    <input type="number" placeholder="Enter total number of members">
+                </div>
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;"><strong>Note:</strong> Student President and Treasurer will automatically become clearance approvers for their organization.</p>
+                <button type="submit" class="btn-primary">Save Organization</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div class="modal" id="commentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Requirements for Clearance - <span id="studentName"></span></h2>
+                <button class="close-modal" onclick="closeModal('commentModal')">&times;</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #1e7e34; margin-bottom: 10px;">Student ID: <span id="studentId"></span></h4>
+                <div id="commentsContainer" style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
+                    <!-- Comments will be displayed here -->
+                </div>
+            </div>
+            <form id="commentForm" onsubmit="submitComment(event)">
+                <div class="form-group">
+                    <label>Add Comment/Requirements *</label>
+                    <textarea id="commentText" required placeholder="Specify the requirements the student needs to submit for clearance (e.g., Library card, ID, receipts, etc.)" style="min-height: 120px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn-primary">Send Requirements</button>
+                    <button type="button" class="btn-view" onclick="closeModal('commentModal')">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data
+        const auditLogs = [
+            { user: 'Registrar Office', action: 'Approved clearance for Felizardo Batula', time: '2 minutes ago', icon: '✅' },
+            { user: 'Library', action: 'Rejected clearance for Student ID: 2021-00555', time: '15 minutes ago', icon: '❌' },
+            { user: 'Treasurer', action: 'Pending review for Carol Egonio', time: '1 hour ago', icon: '⏳' },
+            { user: 'Admin', action: 'Added new faculty member', time: '2 hours ago', icon: '➕' },
+            { user: 'Dean Office', action: 'Approved batch of 12 clearances', time: '3 hours ago', icon: '✅' }
+        ];
+
+        // Initialize bar chart
+        const clearanceData = {
+            requests: 211,
+            pending: 48,
+            rejected: 7,
+            completed: 156
+        };
+
+        function initBarChart() {
+            const chart = document.getElementById('barChart');
+
+            const data = [
+                { label: 'Requests', value: clearanceData.requests, height: 100 },
+                { label: 'Pending', value: clearanceData.pending, height: 40 },
+                { label: 'Rejected', value: clearanceData.rejected, height: 15 },
+                { label: 'Completed', value: clearanceData.completed, height: 75 }
+            ];
+
+            chart.innerHTML = data.map(item => `
+                <div class="bar-container">
+                    <div class="bar" style="height: ${Math.max(item.height, 20)}px;">
+                        <span class="bar-value">${item.value}</span>
+                    </div>
+                    <div class="bar-label">${item.label}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize audit logs
+        function initAuditLogs() {
+            // Audit logs are now in table format - already rendered in HTML
+            console.log('Audit logs initialized');
+        }
+
+        // Review student function
+        function reviewStudent(id) {
+            alert('Reviewing student: ' + id);
+        }
+
+        // Switch page function
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Action functions for tables
+        function viewFaculty(id) {
+            alert('Viewing faculty: ' + id);
+        }
+
+        function editFaculty(id) {
+            alert('Editing faculty: ' + id);
+        }
+
+        function deleteFaculty(id) {
+            if (confirm('Are you sure you want to delete this faculty member?')) {
+                alert('Faculty deleted: ' + id);
+            }
+        }
+
+        function viewStudent(id) {
+            alert('Viewing student: ' + id);
+        }
+
+        function editStudent(id) {
+            alert('Editing student: ' + id);
+        }
+
+        function deleteStudent(id) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                alert('Student deleted: ' + id);
+            }
+        }
+
+        function handleStudentAction(action, id) {
+            if (action === 'view') {
+                alert('Viewing student: ' + id);
+            } else if (action === 'edit') {
+                alert('Editing student: ' + id);
+            } else if (action === 'delete') {
+                if (confirm('Are you sure you want to delete this student?')) {
+                    alert('Student deleted: ' + id);
+                }
+            }
+        }
+
+        function openCommentModal(studentId, studentName) {
+            document.getElementById('studentId').textContent = studentId;
+            document.getElementById('studentName').textContent = studentName;
+            openModal('commentModal');
+            loadComments(studentId);
+        }
+
+        function loadComments(studentId) {
+            // Sample comments - in real app, fetch from server
+            const sampleComments = {
+                '2301436': ['Library clearance required', 'Registrar clearance pending'],
+                '2301536': ['Submit scholarship papers', 'Pay tuition fees'],
+                '2301636': ['Library book returns', 'ID renewal'],
+                '2021-00123': ['Update contact information', 'Submit medical records'],
+                '2021-00456': ['Clearance fee payment', 'Submission of documents']
+            };
+
+            const commentsContainer = document.getElementById('commentsContainer');
+            const comments = sampleComments[studentId] || [];
+            
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = '<p style="color: #666; text-align: center;">No requirements sent yet. Send first requirement below.</p>';
+            } else {
+                commentsContainer.innerHTML = comments.map((comment, index) => `
+                    <div style="background-color: white; padding: 10px; margin-bottom: 8px; border-left: 4px solid #28a745; border-radius: 4px;">
+                        <p style="margin: 0; color: #333; font-weight: 500;">✓ ${comment}</p>
+                        <small style="color: #999;">Sent by Admin</small>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function submitComment(event) {
+            event.preventDefault();
+            const commentText = document.getElementById('commentText').value;
+            const studentId = document.getElementById('studentId').textContent;
+            
+            if (commentText.trim()) {
+                alert('Requirement sent to student ' + studentId + ':\n\n' + commentText);
+                document.getElementById('commentForm').reset();
+                closeModal('commentModal');
+            }
+        }
+
+        function viewApprover(id) {
+            alert('Viewing approver: ' + id);
+        }
+
+        function changeApprover(id) {
+            alert('Changing approver: ' + id);
+        }
+
+        function exportPDF(id) {
+            alert('Exporting PDF for approver: ' + id);
+        }
+
+        // Organization functions
+        function viewOrganization(id) {
+            alert('Viewing organization: ' + id);
+        }
+
+        function editOrganization(id) {
+            alert('Editing organization: ' + id);
+        }
+
+        function deleteOrganization(id) {
+            if (confirm('Are you sure you want to delete this organization?')) {
+                alert('Organization deleted: ' + id);
+            }
+        }
+
+        // Update role type visibility
+        function updateRoleType(role) {
+            const organizationFields = document.getElementById('organizationFields');
+            const organizationSelect = document.getElementById('approverOrganizationSelect');
+            
+            if (role === 'Faculty Adviser') {
+                organizationFields.style.display = 'block';
+                organizationSelect.required = true;
+            } else {
+                organizationFields.style.display = 'none';
+                organizationSelect.required = false;
+            }
+        }
+
+        // Email Notification Function
+        function sendEmailNotification(recipientEmail, recipientName, type, details) {
+            // Create notification message based on type
+            let subject, message, htmlContent;
+            
+            if (type === 'faculty') {
+                subject = 'Welcome to Clearance System - Faculty Account Created';
+                message = `Dear ${recipientName},\n\nYour faculty account has been successfully created in the Student Clearance System.\n\nAccount Details:\n- Email: ${details.email}\n- Department: ${details.department}\n- Approver Status: ${details.isApprover}\n\nPlease log in to access the system.\n\nBest regards,\nAdmin Portal`;
+                htmlContent = `<h2>Welcome to Clearance System</h2><p>Dear ${recipientName},</p><p>Your faculty account has been successfully created.</p><p><strong>Account Details:</strong><br>Email: ${details.email}<br>Department: ${details.department}<br>Approver Status: ${details.isApprover}</p><p>Please log in to access the system.</p>`;
+            } else if (type === 'student') {
+                subject = 'Welcome to Clearance System - Student Account Created';
+                message = `Dear ${recipientName},\n\nYour student account has been successfully created in the Student Clearance System.\n\nAccount Details:\n- Student ID: ${details.studentId}\n- Program: ${details.program}\n- Year Level: ${details.yearLevel}\n\nPlease log in to access the system.\n\nBest regards,\nAdmin Portal`;
+                htmlContent = `<h2>Welcome to Clearance System</h2><p>Dear ${recipientName},</p><p>Your student account has been successfully created.</p><p><strong>Account Details:</strong><br>Student ID: ${details.studentId}<br>Program: ${details.program}<br>Year Level: ${details.yearLevel}</p><p>Please log in to access the system.</p>`;
+            } else if (type === 'organization') {
+                subject = `Student Organization Registered - ${details.organizationName}`;
+                message = `Dear ${recipientName},\n\nYour student organization has been successfully registered in the Clearance System.\n\nOrganization Details:\n- Organization: ${details.organizationName}\n- Program: ${details.program}\n- President: ${details.president}\n- Treasurer: ${details.treasurer}\n\nBest regards,\nAdmin Portal`;
+                htmlContent = `<h2>Organization Registration Confirmed</h2><p>Dear ${recipientName},</p><p>Your student organization has been successfully registered.</p><p><strong>Organization Details:</strong><br>Organization: ${details.organizationName}<br>Program: ${details.program}<br>President: ${details.president}<br>Treasurer: ${details.treasurer}</p>`;
+            }
+            
+            // Log notification (simulating email sending)
+            console.log('📧 Email Notification Sent:', {
+                recipient: recipientEmail,
+                subject: subject,
+                message: message,
+                timestamp: new Date().toLocaleString()
+            });
+            
+            // In a real application, this would call a backend API
+            // return fetch('/api/send-email', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({
+            //         recipient: recipientEmail,
+            //         subject: subject,
+            //         message: message,
+            //         htmlContent: htmlContent,
+            //         type: type,
+            //         timestamp: new Date().toISOString()
+            //     })
+            // });
+            
+            return true;
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                alert('You have been logged out successfully.');
+                // In a real application, this would redirect to a login page or clear session
+                // window.location.href = 'login.html';
+            }
+        }
+
+        // Filter Functions
+        function filterFaculty() {
+            const searchTerm = document.getElementById('facultySearch').value.toLowerCase();
+            const deptFilter = document.getElementById('facultyDepartmentFilter').value;
+            const approverFilter = document.getElementById('facultyApproverFilter').value;
+            const rows = document.querySelectorAll('#facultyTableBody tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[3].textContent.toLowerCase();
+                const dept = row.cells[2].textContent;
+                const approver = row.cells[4].textContent;
+                
+                const nameMatch = name.includes(searchTerm) || email.includes(searchTerm);
+                const deptMatch = !deptFilter || dept.includes(deptFilter);
+                const approverMatch = !approverFilter || approver.includes(approverFilter);
+                
+                row.style.display = (nameMatch && deptMatch && approverMatch) ? '' : 'none';
+            });
+        }
+
+        function filterStudents() {
+            const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+            const yearFilter = document.getElementById('studentYearFilter').value;
+            const semesterFilter = document.getElementById('studentSemesterFilter').value;
+            const courseFilter = document.getElementById('studentCourseFilter').value;
+            const statusFilter = document.getElementById('studentStatusFilter').value;
+            const rows = document.querySelectorAll('#studentTableBody tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length < 2) return;
+                const search = (row.cells[1].textContent + row.cells[2].textContent).toLowerCase();
+                const searchMatch = search.includes(searchTerm);
+                
+                let display = searchMatch;
+                if (display) row.style.display = '';
+                else row.style.display = 'none';
+            });
+        }
+
+        function filterPersonalData() {
+            const searchTerm = document.getElementById('personalDataSearch').value.toLowerCase();
+            const courseFilter = document.getElementById('personalDataCourseFilter').value;
+            const yearFilter = document.getElementById('personalDataYearFilter').value;
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const match = text.includes(searchTerm);
+                row.style.display = match ? '' : 'none';
+            });
+        }
+
+        function filterApprovers() {
+            const searchTerm = document.getElementById('approverSearch').value.toLowerCase();
+            const roleTypeFilter = document.getElementById('approverRoleTypeFilter').value;
+            const organizationFilter = document.getElementById('approverOrganizationFilterDropdown').value;
+            const statusFilter = document.getElementById('approverStatusFilter').value;
+            const rows = document.querySelectorAll('#approverTableBody tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const org = row.cells[4].textContent;
+                const roleType = row.cells[6].textContent;
+                const status = row.cells[7].textContent;
+                
+                const nameMatch = name.includes(searchTerm) || org.toLowerCase().includes(searchTerm);
+                const roleMatch = !roleTypeFilter || roleType.includes(roleTypeFilter);
+                const orgMatch = !organizationFilter || org.includes(organizationFilter);
+                const statusMatch = !statusFilter || status.includes(statusFilter);
+                
+                row.style.display = (nameMatch && roleMatch && orgMatch && statusMatch) ? '' : 'none';
+            });
+        }
+
+        function filterOrganizations() {
+            const searchTerm = document.getElementById('organizationSearch').value.toLowerCase();
+            const programFilter = document.getElementById('organizationProgramFilter').value;
+            const sizeFilter = document.getElementById('organizationSizeFilter').value;
+            const rows = document.querySelectorAll('#organizationTableBody tr');
+            
+            rows.forEach(row => {
+                const program = row.cells[0].textContent;
+                const name = row.cells[1].textContent.toLowerCase();
+                const adviser = row.cells[6].textContent.toLowerCase();
+                const members = parseInt(row.cells[7].textContent);
+                
+                const searchMatch = name.includes(searchTerm) || adviser.includes(searchTerm);
+                const programMatch = !programFilter || program.includes(programFilter);
+                
+                let sizeMatch = true;
+                if (sizeFilter === 'small') sizeMatch = members < 30;
+                else if (sizeFilter === 'medium') sizeMatch = members >= 30 && members <= 45;
+                else if (sizeFilter === 'large') sizeMatch = members > 45;
+                
+                row.style.display = (searchMatch && programMatch && sizeMatch) ? '' : 'none';
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize bar chart
+            initBarChart();
+            initAuditLogs();
+
+            // Navigation handling
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (!item.querySelector('.chevron')) {
+                    item.addEventListener('click', function() {
+                        const page = this.dataset.page;
+                        switchPage(page);
+                        
+                        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                } else {
+                    item.addEventListener('click', function(e) {
+                        const page = this.dataset.page;
+                        const submenu = document.getElementById(page + 'Submenu');
+                        
+                        if (submenu) {
+                            submenu.classList.toggle('show');
+                            this.classList.toggle('expanded');
+                        }
+                    });
+                }
+            });
+
+            // Submenu navigation
+            document.querySelectorAll('.submenu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const action = this.dataset.action;
+                    
+                    if (action === 'faculty-list') {
+                        switchPage('facultyPage');
+                    } else if (action === 'add-faculty') {
+                        openModal('addFacultyModal');
+                    } else if (action === 'student-clearance') {
+                        switchPage('studentPage');
+                    } else if (action === 'student-personal') {
+                        switchPage('studentPersonalPage');
+                    } else if (action === 'add-student') {
+                        openModal('addStudentModal');
+                    } else if (action === 'approver-list') {
+                        switchPage('approverPage');
+                    } else if (action === 'add-approver') {
+                        openModal('addApproverModal');
+                    } else if (action === 'profile' || action === 'update-clearance') {
+                        switchPage('settingsPage');
+                    } else if (action === 'organization-list') {
+                        switchPage('organizationPage');
+                    } else if (action === 'add-organization') {
+                        openModal('addOrganizationModal');
+                    }
+                });
+            });
+
+            // Checkbox functionality
+            document.getElementById('selectAll')?.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.row-checkbox');
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+
+            // Individual checkbox handling
+            document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(document.querySelectorAll('.row-checkbox')).every(cb => cb.checked);
+                    const selectAll = document.getElementById('selectAll');
+                    if (selectAll) selectAll.checked = allChecked;
+                });
+            });
+
+            // Form submissions
+            document.getElementById('addFacultyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const fullName = this.querySelector('input[placeholder="Enter full name"]').value;
+                const department = this.querySelector('select').value;
+                const email = this.querySelector('input[type="email"]').value;
+                const isApprover = this.querySelectorAll('select')[2].value;
+                
+                // Send email notification
+                sendEmailNotification(email, fullName, 'faculty', {
+                    email: email,
+                    department: department,
+                    isApprover: isApprover === 'yes' ? 'Yes' : 'No'
+                });
+                
+                alert('Faculty added successfully!\n📧 Notification email sent to: ' + email);
+                closeModal('addFacultyModal');
+                this.reset();
+            });
+
+            document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const studentId = this.querySelector('input[placeholder="2024-00001"]').value;
+                const fullName = this.querySelector('input[placeholder="Enter full name"]').value;
+                const yearLevel = this.querySelectorAll('select')[0].value;
+                const program = this.querySelectorAll('select')[2].value;
+                const email = this.querySelector('input[type="email"]').value;
+                
+                // Send email notification
+                sendEmailNotification(email, fullName, 'student', {
+                    studentId: studentId,
+                    program: program,
+                    yearLevel: yearLevel + ' Year'
+                });
+                
+                alert('Student added successfully!\n📧 Notification email sent to: ' + email);
+                closeModal('addStudentModal');
+                this.reset();
+            });
+
+            document.getElementById('addApproverForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Approver added successfully!');
+                closeModal('addApproverModal');
+                this.reset();
+            });
+
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Profile updated successfully!');
+            });
+
+            document.getElementById('clearanceConfigForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Clearance configuration updated successfully!');
+            });
+
+            document.getElementById('addOrganizationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const program = this.querySelector('select').value;
+                const organizationName = this.querySelector('input[placeholder="e.g., DIGITS Organization"]').value;
+                const president = this.querySelector('input[placeholder="Enter student president name"]').value;
+                const vicePresident = this.querySelector('input[placeholder="Enter student vice president name"]').value;
+                const treasurer = this.querySelector('input[placeholder="Enter student treasurer name"]').value;
+                const secretary = this.querySelector('input[placeholder="Enter student secretary name"]').value;
+                const adviser = this.querySelector('input[placeholder="Enter faculty adviser name"]').value;
+                const totalMembers = this.querySelector('input[type="number"]').value;
+                
+                // Send notification emails to key officers
+                // Note: In real system, you'd fetch actual emails from database
+                sendEmailNotification('president@example.com', president, 'organization', {
+                    organizationName: organizationName,
+                    program: program,
+                    president: president,
+                    treasurer: treasurer
+                });
+                
+                sendEmailNotification('treasurer@example.com', treasurer, 'organization', {
+                    organizationName: organizationName,
+                    program: program,
+                    president: president,
+                    treasurer: treasurer
+                });
+                
+                sendEmailNotification('adviser@example.com', adviser, 'organization', {
+                    organizationName: organizationName,
+                    program: program,
+                    president: president,
+                    treasurer: treasurer
+                });
+                
+                alert('Organization added successfully!\n📧 Notification emails sent to:\n- ' + president + '\n- ' + treasurer + '\n- ' + adviser);
+                closeModal('addOrganizationModal');
+                this.reset();
+            });
+
+            // Search functionality
+            document.getElementById('menuSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.nav-item, .submenu-item').forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    e.target.classList.remove('show');
+                }
+            });
+        });
+    </script>
