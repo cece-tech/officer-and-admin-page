@@ -864,21 +864,6 @@
                     </div>
                 </div>
                 
-                <div class="nav-item" data-page="approver">
-                    <span class="icon">✅</span>
-                    <span>Clearance Approver</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="approverSubmenu">
-                    <div class="submenu-item" data-action="approver-list">
-                        <span class="icon">📋</span>
-                        <span>Clearance List</span>
-                    </div>
-                    <div class="submenu-item" data-action="add-approver">
-                        <span class="icon">➕</span>
-                        <span>Add Approver</span>
-                    </div>
-                </div>
                 
                 <div class="nav-item" data-page="organization">
                     <span class="icon">🏢</span>
@@ -905,6 +890,10 @@
                     <div class="submenu-item" data-action="profile">
                         <span class="icon">👤</span>
                         <span>Profile</span>
+                    </div>
+                    <div class="submenu-item" data-action="audit-logs">
+                        <span class="icon">📋</span>
+                        <span>Audit Logs</span>
                     </div>
                     <div class="submenu-item" data-action="logout" onclick="logout()">
                         <span class="icon">🚪</span>
@@ -1019,6 +1008,37 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Reports -->
+                    <div class="section" style="margin-top: 18px;">
+                        <div class="section-header">
+                            <h2>Admin Reports</h2>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <button class="btn-primary" onclick="exportDashboardCSV()">📥 Export CSV</button>
+                                <button class="btn-primary" onclick="exportPDF('dashboard')">📥 Export PDF</button>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;gap:18px;flex-wrap:wrap;">
+                            <div style="min-width:220px; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff;">
+                                <strong>Clearance Metrics</strong>
+                                <div style="margin-top:8px;">
+                                    <div>Requests: <span id="rep_requests">-</span></div>
+                                    <div>Pending: <span id="rep_pending">-</span></div>
+                                    <div>Completed: <span id="rep_completed">-</span></div>
+                                    <div>Rejected: <span id="rep_rejected">-</span></div>
+                                </div>
+                            </div>
+
+                            <div style="min-width:220px; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff;">
+                                <strong>Time-to-Clear</strong>
+                                <div style="margin-top:8px;">
+                                    <div>Avg. Time-to-Clear: <span id="rep_avgTime">-</span></div>
+                                    <div>Total Students: <span id="rep_totalStudents">-</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1468,191 +1488,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="page-view" id="approverPage">
-                    <h1>Clearance Approver Management</h1>
-                    
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Clearance Approver List</h2>
-                            <button class="btn-primary" onclick="openModal('addApproverModal')">➕ Add Approver</button>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                            <div class="search-bar">
-                                <input type="text" id="approverSearch" placeholder="Search name or organization..." onkeyup="filterApprovers()">
-                            </div>
-                            <select id="approverRoleTypeFilter" onchange="filterApprovers()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
-                                <option value="">All Role Types</option>
-                                <option value="Student Leader">Student Leader</option>
-                                <option value="Faculty Adviser">Faculty Adviser</option>
-                            </select>
-                            <select id="approverOrganizationFilterDropdown" onchange="filterApprovers()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
-                                <option value="">All Organizations</option>
-                                <option value="BSIT Digits Organization">BSIT Digits Organization</option>
-                                <option value="BSCS Tech Society">BSCS Tech Society</option>
-                                <option value="BSCE Engineers Club">BSCE Engineers Club</option>
-                            </select>
-                            <select id="approverStatusFilter" onchange="filterApprovers()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
-                                <option value="">All Status</option>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
-                        
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Title</th>
-                                    <th>Department</th>
-                                    <th>Assigned to Organization</th>
-                                    <th>Role</th>
-                                    <th>Role Type</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="approverTableBody">
-                                <tr>
-                                    <td>APR-001</td>
-                                    <td>Ramon Cruz</td>
-                                    <td>Student</td>
-                                    <td>Information Technology</td>
-                                    <td>BSIT Digits Organization</td>
-                                    <td><span class="badge badge-warning">Student President</span></td>
-                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-001')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-001')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-001')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-002</td>
-                                    <td>John Doe</td>
-                                    <td>Student</td>
-                                    <td>Information Technology</td>
-                                    <td>BSIT Digits Organization</td>
-                                    <td><span class="badge badge-warning">Student Treasurer</span></td>
-                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-002')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-002')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-002')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-003</td>
-                                    <td>Juan Dela Cruz</td>
-                                    <td>Student</td>
-                                    <td>Computer Science</td>
-                                    <td>BSCS Tech Society</td>
-                                    <td><span class="badge badge-warning">Student President</span></td>
-                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-003')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-003')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-003')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-004</td>
-                                    <td>David Lopez</td>
-                                    <td>Student</td>
-                                    <td>Computer Science</td>
-                                    <td>BSCS Tech Society</td>
-                                    <td><span class="badge badge-warning">Student Treasurer</span></td>
-                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-004')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-004')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-004')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-005</td>
-                                    <td>Miguel Rodriguez</td>
-                                    <td>Student</td>
-                                    <td>Civil Engineering</td>
-                                    <td>BSCE Engineers Club</td>
-                                    <td><span class="badge badge-warning">Student President</span></td>
-                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-005')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-005')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-005')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-006</td>
-                                    <td>Carlos Mendez</td>
-                                    <td>Student</td>
-                                    <td>Civil Engineering</td>
-                                    <td>BSCE Engineers Club</td>
-                                    <td><span class="badge badge-warning">Student Treasurer</span></td>
-                                    <td><span class="badge badge-secondary">Student Leader (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-006')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-006')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-006')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-007</td>
-                                    <td>Prof. Allen Chen</td>
-                                    <td>Faculty</td>
-                                    <td>Information Technology</td>
-                                    <td>BSIT Digits Organization</td>
-                                    <td><span class="badge badge-success">Faculty Adviser</span></td>
-                                    <td><span class="badge badge-secondary">Faculty Adviser (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-007')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-007')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-007')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-008</td>
-                                    <td>Dr. Jessica Wong</td>
-                                    <td>Faculty</td>
-                                    <td>Computer Science</td>
-                                    <td>BSCS Tech Society</td>
-                                    <td><span class="badge badge-success">Faculty Adviser</span></td>
-                                    <td><span class="badge badge-secondary">Faculty Adviser (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-008')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-008')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-008')">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>APR-009</td>
-                                    <td>Engr. Michael Torres</td>
-                                    <td>Faculty</td>
-                                    <td>Civil Engineering</td>
-                                    <td>BSCE Engineers Club</td>
-                                    <td><span class="badge badge-success">Faculty Adviser</span></td>
-                                    <td><span class="badge badge-secondary">Faculty Adviser (Auto-Approver)</span></td>
-                                    <td><span class="badge approved">Active</span></td>
-                                    <td>
-                                        <button class="btn-view" onclick="viewApprover('APR-009')">View</button>
-                                        <button class="btn-warning" onclick="editApprover('APR-009')">Edit</button>
-                                        <button class="btn-danger" onclick="deleteApprover('APR-009')">Delete</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                
 
                 <!-- Organization Page -->
                 <div class="page-view" id="organizationPage">
@@ -1749,6 +1585,42 @@
                     </div>
                 </div>
 
+                <!-- Audit Logs Page -->
+                <div class="page-view" id="auditPage">
+                    <h1>Audit & System Logs</h1>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Activity Log</h2>
+                            <div style="display:flex;gap:8px;">
+                                <button class="btn-primary" onclick="clearAuditLogs()">🗑️ Clear Logs</button>
+                                <button class="btn-primary" onclick="exportAuditLogs()">📥 Export Logs</button>
+                            </div>
+                        </div>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Details</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auditLogTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;color:#999;">
+                                            No logs recorded yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Settings Page -->
                 <div class="page-view" id="settingsPage">
                     <h1>Settings</h1>
@@ -1759,41 +1631,41 @@
                         </div>
                         <form id="profileForm">
                             <div class="form-group">
+                                <label>Profile Picture</label>
+                                <div style="display:flex;gap:12px;align-items:center;">
+                                    <img id="profilePreview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23777' font-size='12'>No Image</text></svg>" alt="Profile" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:1px solid #ddd;">
+                                    <input type="file" id="profilePicture" accept="image/*">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Digital Signature</label>
+                                <div style="display:flex;gap:12px;align-items:center;">
+                                    <img id="signaturePreview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='80'><rect width='100%' height='100%' fill='%23f8f9fa'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='12'>No Signature</text></svg>" alt="Signature" style="width:180px;height:80px;border-radius:6px;object-fit:contain;border:1px solid #ddd;background:#fff;padding:6px;">
+                                    <input type="file" id="profileSignature" accept="image/*">
+                                </div>
+                                <small style="color:#666;display:block;margin-top:6px;">Upload a scanned signature (PNG/SVG preferred) to be used on clearance documents.</small>
+                            </div>
+                            <div class="form-group">
                                 <label>Full Name</label>
-                                <input type="text" value="Admin User" required>
+                                <input type="text" id="profileName" value="Admin User" required>
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" value="admin@lnu.edu.ph" required>
+                                <input type="email" id="profileEmail" value="admin@lnu.edu.ph" required>
                             </div>
                             <div class="form-group">
-                                <label>Phone</label>
-                                <input type="tel" value="+63 912 345 6789">
+                                <label>Contact Number</label>
+                                <input type="tel" id="profileContact" value="+63 912 345 6789">
+                            </div>
+                            <div class="form-group">
+                                <label>Office</label>
+                                <input type="text" id="profileOffice" value="Admin Office">
                             </div>
                             <button type="submit" class="btn-primary">Update Profile</button>
                         </form>
                     </div>
                     
-                    <div class="section" style="margin-top: 24px;">
-                        <div class="section-header">
-                            <h2>Clearance Configuration</h2>
-                        </div>
-                        <form id="clearanceConfigForm">
-                            <div class="form-group">
-                                <label>Default Clearance Requirements</label>
-                                <textarea placeholder="List default clearance requirements...">Library Clearance
-Registrar Clearance
-Treasurer Clearance
-Dean's Clearance
-Student Affairs Clearance</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Auto-Approval Threshold (days)</label>
-                                <input type="number" value="7" min="1">
-                            </div>
-                            <button type="submit" class="btn-primary">Update Configuration</button>
-                        </form>
-                    </div>
+                    
                 </div>
             </div>
         </main>
@@ -2208,7 +2080,72 @@ Student Affairs Clearance</textarea>
         }
 
         function exportPDF(id) {
-            alert('Exporting PDF for approver: ' + id);
+            if (id === 'dashboard') {
+                exportDashboardPDF();
+                return;
+            }
+            alert('Exporting PDF for: ' + id);
+        }
+
+        function exportDashboardCSV() {
+            try {
+                const getText = (sel, fallback) => {
+                    const el = document.getElementById(sel);
+                    return el ? el.textContent.trim() : (typeof fallback !== 'undefined' ? fallback : '');
+                };
+
+                const requests = (typeof clearanceData !== 'undefined' && clearanceData.requests) ? clearanceData.requests : getText('rep_requests', getText('pendingCount', ''));
+                const pending = (typeof clearanceData !== 'undefined' && clearanceData.pending) ? clearanceData.pending : getText('pendingCount', '');
+                const completed = (typeof clearanceData !== 'undefined' && clearanceData.completed) ? clearanceData.completed : getText('completedCount', '');
+                const rejected = (typeof clearanceData !== 'undefined' && clearanceData.rejected) ? clearanceData.rejected : getText('rejectedCount', '');
+                const avgTime = getText('avgTime', '');
+                const totalStudents = getText('totalStudents', '');
+                const totalOrgs = getText('totalOrgs', '');
+                const treasurer = getText('treasurerCount', '');
+
+                const rows = [
+                    ['Metric','Value'],
+                    ['Requests', requests],
+                    ['Pending', pending],
+                    ['Completed', completed],
+                    ['Rejected', rejected],
+                    ['Avg Time To Clear', avgTime],
+                    ['Total Students', totalStudents],
+                    ['Total Organizations', totalOrgs],
+                    ['Treasurer Clearances', treasurer]
+                ];
+
+                const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+                const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `admin_reports_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            } catch (err) { console.error('Export CSV failed', err); alert('Failed to export CSV'); }
+        }
+
+        function exportDashboardPDF() {
+            try {
+                const getText = (id, fallback) => { const el = document.getElementById(id); return el ? el.textContent.trim() : (fallback || ''); };
+                const requests = (typeof clearanceData !== 'undefined' && clearanceData.requests) ? clearanceData.requests : getText('rep_requests','');
+                const pending = (typeof clearanceData !== 'undefined' && clearanceData.pending) ? clearanceData.pending : getText('rep_pending','');
+                const completed = (typeof clearanceData !== 'undefined' && clearanceData.completed) ? clearanceData.completed : getText('rep_completed','');
+                const rejected = (typeof clearanceData !== 'undefined' && clearanceData.rejected) ? clearanceData.rejected : getText('rep_rejected','');
+                const avgTime = getText('avgTime','');
+                const totalStudents = getText('totalStudents','');
+                const html = `<!doctype html><html><head><meta charset="utf-8"><title>Admin Report</title><style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#222}h1{font-size:18px}table{border-collapse:collapse;width:100%;margin-top:12px}td,th{border:1px solid #ddd;padding:8px;text-align:left}</style></head><body><h1>Admin Report - Clearance Metrics</h1><table><tr><th>Metric</th><th>Value</th></tr><tr><td>Requests</td><td>${requests}</td></tr><tr><td>Pending</td><td>${pending}</td></tr><tr><td>Completed</td><td>${completed}</td></tr><tr><td>Rejected</td><td>${rejected}</td></tr><tr><td>Avg Time To Clear</td><td>${avgTime}</td></tr><tr><td>Total Students</td><td>${totalStudents}</td></tr></table></body></html>`;
+                const w = window.open('', '_blank', 'noopener');
+                if (!w) { alert('Popup blocked. Please allow popups for this site to export PDF.'); return; }
+                w.document.open();
+                w.document.write(html);
+                w.document.close();
+                // Give browser a moment to render, then call print
+                setTimeout(() => { w.focus(); w.print(); /* w.close(); */ }, 500);
+            } catch (err) { console.error('Export PDF failed', err); alert('Failed to export PDF'); }
         }
 
         // Organization functions
@@ -2291,6 +2228,92 @@ Student Affairs Clearance</textarea>
                 // In a real application, this would redirect to a login page or clear session
                 // window.location.href = 'login.html';
             }
+        }
+
+        // Audit & Logging Functions
+        function recordAuditLog(action, details, status = 'Success') {
+            try {
+                const profile = JSON.parse(localStorage.getItem('adminProfile') || '{}');
+                const userName = profile.name || 'Admin User';
+                const timestamp = new Date().toISOString();
+                const logEntry = {
+                    timestamp: timestamp,
+                    user: userName,
+                    action: action,
+                    details: details,
+                    status: status
+                };
+                
+                let logs = JSON.parse(localStorage.getItem('systemLogs') || '[]');
+                logs.unshift(logEntry);
+                // Keep last 1000 logs
+                if (logs.length > 1000) logs = logs.slice(0, 1000);
+                localStorage.setItem('systemLogs', JSON.stringify(logs));
+                
+                console.log('[AUDIT]', action, details);
+            } catch (err) { console.error('Failed to record audit log', err); }
+        }
+
+        function loadAuditLogs() {
+            try {
+                const logs = JSON.parse(localStorage.getItem('systemLogs') || '[]');
+                const tbody = document.getElementById('auditLogTableBody');
+                if (!tbody) return;
+                
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No logs recorded yet.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = logs.map(log => `
+                    <tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.user}</td>
+                        <td>${log.action}</td>
+                        <td>${log.details || '-'}</td>
+                        <td><span class="badge" style="background-color:${log.status === 'Success' ? '#90EE90' : '#FF6B6B'};color:#000;">${log.status}</span></td>
+                    </tr>
+                `).join('');
+            } catch (err) { console.error('Failed to load audit logs', err); }
+        }
+
+        function clearAuditLogs() {
+            if (confirm('Are you sure you want to clear all audit logs? This action cannot be undone.')) {
+                try {
+                    localStorage.removeItem('systemLogs');
+                    loadAuditLogs();
+                    alert('Audit logs cleared.');
+                    recordAuditLog('Logs Cleared', 'Admin cleared all audit logs');
+                } catch (err) { console.error('Failed to clear logs', err); }
+            }
+        }
+
+        function exportAuditLogs() {
+            try {
+                const logs = JSON.parse(localStorage.getItem('systemLogs') || '[]');
+                const rows = [['Timestamp','User','Action','Details','Status']];
+                logs.forEach(log => {
+                    rows.push([
+                        new Date(log.timestamp).toLocaleString(),
+                        log.user,
+                        log.action,
+                        log.details || '',
+                        log.status
+                    ]);
+                });
+                
+                const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+                const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `audit_logs_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                recordAuditLog('Export Logs', 'Exported audit logs to CSV');
+            } catch (err) { console.error('Failed to export logs', err); alert('Failed to export logs.'); }
         }
 
         // Filter Functions
@@ -2398,6 +2421,26 @@ Student Affairs Clearance</textarea>
             initBarChart();
             initAuditLogs();
 
+            // Populate admin report placeholders
+            (function() {
+                try {
+                    const safeText = id => (document.getElementById(id) && document.getElementById(id).textContent) ? document.getElementById(id).textContent.trim() : '';
+                    const requests = (typeof clearanceData !== 'undefined' && clearanceData.requests) ? clearanceData.requests : safeText('pendingCount');
+                    const pending = (typeof clearanceData !== 'undefined' && clearanceData.pending) ? clearanceData.pending : safeText('pendingCount');
+                    const completed = (typeof clearanceData !== 'undefined' && clearanceData.completed) ? clearanceData.completed : safeText('completedCount');
+                    const rejected = (typeof clearanceData !== 'undefined' && clearanceData.rejected) ? clearanceData.rejected : safeText('rejectedCount');
+                    const avgTime = safeText('avgTime');
+                    const totalStudents = safeText('totalStudents');
+
+                    if (document.getElementById('rep_requests')) document.getElementById('rep_requests').textContent = requests;
+                    if (document.getElementById('rep_pending')) document.getElementById('rep_pending').textContent = pending;
+                    if (document.getElementById('rep_completed')) document.getElementById('rep_completed').textContent = completed;
+                    if (document.getElementById('rep_rejected')) document.getElementById('rep_rejected').textContent = rejected;
+                    if (document.getElementById('rep_avgTime')) document.getElementById('rep_avgTime').textContent = avgTime;
+                    if (document.getElementById('rep_totalStudents')) document.getElementById('rep_totalStudents').textContent = totalStudents;
+                } catch (err) { console.warn('Error populating admin report placeholders', err); }
+            })();
+
             // Navigation handling
             document.querySelectorAll('.nav-item').forEach(item => {
                 if (!item.querySelector('.chevron')) {
@@ -2476,6 +2519,9 @@ Student Affairs Clearance</textarea>
                 const email = this.querySelector('input[type="email"]').value;
                 const isApprover = this.querySelectorAll('select')[2].value;
                 
+                // Record audit log
+                recordAuditLog('Add Faculty', `Added faculty ${fullName} (${email}) to department ${department}`);
+                
                 // Send email notification
                 sendEmailNotification(email, fullName, 'faculty', {
                     email: email,
@@ -2497,6 +2543,9 @@ Student Affairs Clearance</textarea>
                 const yearLevel = this.querySelectorAll('select')[0].value;
                 const program = this.querySelectorAll('select')[2].value;
                 const email = this.querySelector('input[type="email"]').value;
+                
+                // Record audit log
+                recordAuditLog('Add Student', `Added student ${fullName} (ID: ${studentId}, Program: ${program})`);
                 
                 // Send email notification
                 sendEmailNotification(email, fullName, 'student', {
@@ -2539,6 +2588,9 @@ Student Affairs Clearance</textarea>
                 const secretary = this.querySelector('input[placeholder="Enter student secretary name"]').value;
                 const adviser = this.querySelector('input[placeholder="Enter faculty adviser name"]').value;
                 const totalMembers = this.querySelector('input[type="number"]').value;
+                
+                // Record audit log
+                recordAuditLog('Add Organization', `Added organization ${organizationName} (Program: ${program}, Members: ${totalMembers})`);
                 
                 // Send notification emails to key officers
                 // Note: In real system, you'd fetch actual emails from database
@@ -2588,4 +2640,91 @@ Student Affairs Clearance</textarea>
                 }
             });
         });
+    </script>
+
+    <script>
+    // Additional profile handlers: load/save profile and image preview
+    (function() {
+        function byId(id) { return document.getElementById(id); }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileForm = byId('profileForm');
+            const preview = byId('profilePreview');
+            const picInput = byId('profilePicture');
+            const signaturePreview = byId('signaturePreview');
+            const signatureInput = byId('profileSignature');
+
+            // Load stored profile if present
+            try {
+                const raw = localStorage.getItem('adminProfile');
+                if (raw) {
+                    const p = JSON.parse(raw);
+                    if (p.name) byId('profileName').value = p.name;
+                    if (p.email) byId('profileEmail').value = p.email;
+                    if (p.contact) byId('profileContact').value = p.contact;
+                    if (p.office) byId('profileOffice').value = p.office;
+                    if (p.picture) preview.src = p.picture;
+                    if (p.signature && signaturePreview) signaturePreview.src = p.signature;
+                }
+            } catch (err) { console.warn('Could not load profile from localStorage', err); }
+
+            // Preview chosen image
+            if (picInput) {
+                picInput.addEventListener('change', function (e) {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function () {
+                        preview.src = reader.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Preview chosen signature image
+            if (signatureInput) {
+                signatureInput.addEventListener('change', function (e) {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function () {
+                        if (signaturePreview) signaturePreview.src = reader.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Save profile on submit
+            if (profileForm) {
+                profileForm.addEventListener('submit', function (e) {
+                    // allow other handlers (existing alert) to run; we still save
+                    e.preventDefault();
+                    const profile = {
+                        name: byId('profileName').value,
+                        email: byId('profileEmail').value,
+                        contact: byId('profileContact').value,
+                        office: byId('profileOffice').value,
+                        picture: byId('profilePreview').src,
+                        signature: signaturePreview ? signaturePreview.src : null
+                    };
+
+                    try {
+                        localStorage.setItem('adminProfile', JSON.stringify(profile));
+                    } catch (err) {
+                        console.error('Failed to save profile', err);
+                    }
+
+                    // visual confirmation if showAlert is not available
+                    if (typeof showAlert !== 'function') {
+                        const btn = profileForm.querySelector('button[type="submit"]');
+                        if (btn) {
+                            const old = btn.textContent;
+                            btn.textContent = 'Saved';
+                            setTimeout(() => btn.textContent = old, 1000);
+                        }
+                    }
+                });
+            }
+        });
+    })();
     </script>

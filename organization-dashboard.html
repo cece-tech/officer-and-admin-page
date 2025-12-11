@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treasurer Dashboard - Student Clearance System</title>
+    <title>SSC Officer Clearance Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,7 @@
 
         .dashboard {
             display: flex;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .sidebar {
@@ -40,20 +40,6 @@
             margin-bottom: 20px;
         }
 
-        .search-bar-sidebar input {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-        }
-
-        .search-bar-sidebar input::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-
         .nav-item {
             padding: 12px 15px;
             margin-bottom: 5px;
@@ -61,7 +47,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
             transition: all 0.3s;
         }
 
@@ -73,48 +59,6 @@
             background: rgba(255,255,255,0.2);
         }
 
-        .nav-item .icon {
-            margin-right: 10px;
-        }
-
-        .nav-item span:nth-child(2) {
-            flex: 1;
-        }
-
-        .chevron {
-            transition: transform 0.3s;
-        }
-
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s;
-            margin-left: 20px;
-        }
-
-        .submenu.active {
-            max-height: 500px;
-        }
-
-        .submenu-item {
-            padding: 10px 15px;
-            margin-bottom: 3px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-        }
-
-        .submenu-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .submenu-item .icon {
-            margin-right: 8px;
-        }
-
         .main-content {
             flex: 1;
             overflow-y: auto;
@@ -123,42 +67,19 @@
 
         h1 {
             color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 32px;
-        }
-
-        .summary-banner {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 25px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .summary-item {
-            text-align: center;
-        }
-
-        .summary-item .label {
-            display: block;
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 8px;
-        }
-
-        .summary-item .value {
-            display: block;
+            margin-bottom: 10px;
             font-size: 28px;
-            font-weight: bold;
-            color: #2c3e50;
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 14px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -168,30 +89,12 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 20px;
         }
 
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        .stat-icon.pending { background: #fff3cd; }
-        .stat-icon.approved { background: #d4edda; }
-        .stat-icon.warning { background: #f8d7da; }
-        .stat-icon.success { background: #d1ecf1; }
-
-        .stat-info h3 {
+        .stat-card h3 {
             font-size: 14px;
             color: #7f8c8d;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .stat-number {
@@ -204,17 +107,6 @@
         .stat-change {
             font-size: 13px;
             color: #7f8c8d;
-        }
-
-        .stat-change.positive {
-            color: #27ae60;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
         }
 
         .section {
@@ -230,6 +122,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .section-header h2 {
@@ -237,236 +131,23 @@
             color: #2c3e50;
         }
 
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .quick-action-btn {
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+        .filters-bar {
             display: flex;
-            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .quick-action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .quick-action-btn .icon {
-            font-size: 32px;
-        }
-
-        .activity-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
-        }
-
-        .activity-item.approved {
-            background: #d4edda;
-            border-left-color: #28a745;
-        }
-
-        .activity-item.pending {
-            background: #fff3cd;
-            border-left-color: #ffc107;
-        }
-
-        .activity-icon {
-            font-size: 24px;
-        }
-
-        .activity-content p {
-            font-size: 14px;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .activity-time {
-            font-size: 12px;
-            color: #7f8c8d;
-        }
-
-        .page-view {
-            display: none;
-        }
-
-        .page-view.active {
-            display: block;
-        }
-
-        .sanction-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .sanction-card {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 20px;
-            transition: all 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .sanction-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-
-        .sanction-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-
-        .student-info h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .student-info p {
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-
-        .fee-badge {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .fee-badge.paid {
-            background: #27ae60;
-        }
-
-        .fee-badge.partial {
-            background: #f39c12;
-        }
-
-        .activity-details {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-
-        .activity-details p {
-            font-size: 13px;
-            margin: 5px 0;
-            color: #555;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .card-actions button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
-
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #229954;
-        }
-
-        .filters-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 5px;
+            min-width: 180px;
         }
 
         .filter-group label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #2c3e50;
         }
@@ -479,11 +160,196 @@
             font-size: 14px;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            align-items: center;
+        }
+
+        .bulk-actions span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .queue-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .queue-table thead {
+            background: #f8f9fa;
+        }
+
+        .queue-table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .queue-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .queue-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.follow-up {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d68910;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #7f8c8d;
         }
 
         .form-group {
@@ -514,80 +380,119 @@
             resize: vertical;
         }
 
-        .queue-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .student-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
-        .queue-item {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
+        .detail-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
 
-        .queue-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .detail-row strong {
+            color: #2c3e50;
         }
 
-        .queue-info {
-            flex: 1;
+        .detail-row span {
+            color: #7f8c8d;
         }
 
-        .queue-info h3 {
-            font-size: 16px;
+        .activity-log {
+            margin-top: 20px;
+        }
+
+        .log-item {
+            padding: 12px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .log-item p {
+            font-size: 13px;
             color: #2c3e50;
             margin-bottom: 5px;
         }
 
-        .queue-info p {
-            font-size: 13px;
+        .log-time {
+            font-size: 12px;
             color: #7f8c8d;
-            margin: 3px 0;
         }
 
-        .queue-actions {
-            display: flex;
-            gap: 10px;
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
 
-        .queue-actions button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
             cursor: pointer;
+        }
+
+        .selected-count {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
-            transition: all 0.3s;
         }
 
         @media (max-width: 768px) {
             .sidebar {
-                width: 100%;
                 position: fixed;
-                z-index: 1000;
-                transform: translateX(-100%);
-                transition: transform 0.3s;
+                left: -280px;
+                transition: left 0.3s;
+                z-index: 999;
             }
 
             .sidebar.active {
-                transform: translateX(0);
+                left: 0;
             }
 
-            .stats-grid,
-            .grid-layout {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
+            .filters-bar {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .queue-table {
+                font-size: 12px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
             }
         }
+
+        /* Placeholder for additional styles */
     </style>
 </head>
 <body>
@@ -598,485 +503,1000 @@
                 <p>Treasurer Dashboard</p>
             </div>
             
-            <div class="search-bar-sidebar">
-                <input type="text" id="menuSearch" placeholder="Search menu...">
-            </div>
-            
             <nav class="nav">
-                <div class="nav-item active" onclick="showPage('officer-dashboard-page')">
-                    <span class="icon">📊</span>
-                    <span>Dashboard</span>
+                <div class="nav-item active" onclick="showPage('reports-page')">
+                    <span>📊</span>
+                    <span>Reports</span>
                 </div>
                 
-                <div class="nav-item" onclick="toggleSubmenu('sanctionSubmenu', this)">
-                    <span class="icon">💳</span>
-                    <span>Sanction Fees</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="sanctionSubmenu">
-                    <div class="submenu-item" onclick="showPage('sanction-fees-page')">
-                        <span class="icon">📋</span>
-                        <span>All Sanctions</span>
-                    </div>
-                    <div class="submenu-item" onclick="showPage('post-sanction-page')">
-                        <span class="icon">➕</span>
-                        <span>Post New Sanction</span>
-                    </div>
+                <div class="nav-item" onclick="showPage('student-clearance-page')">
+                    <span>📋</span>
+                    <span>Student Clearance</span>
                 </div>
                 
-                <div class="nav-item" onclick="toggleSubmenu('queueSubmenu', this)">
-                    <span class="icon">📋</span>
-                    <span>Clearance Queue</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="queueSubmenu">
-                    <div class="submenu-item" onclick="showPage('clearance-queue-page')">
-                        <span class="icon">⏳</span>
-                        <span>Pending Queue</span>
-                    </div>
+                <div class="nav-item" onclick="showPage('clearance-approver-page')">
+                    <span>✅</span>
+                    <span>Clearance Approvers</span>
                 </div>
                 
-                <div class="nav-item" onclick="showPage('payment-records-page')">
-                    <span class="icon">💰</span>
-                    <span>Payment Records</span>
+                <div class="nav-item" onclick="showPage('clearance-config-page')">
+                    <span>⚙️</span>
+                    <span>Clearance Config</span>
+                </div>
+                
+                <div class="nav-item" onclick="showPage('profile-page')">
+                    <span>👤</span>
+                    <span>Profile</span>
                 </div>
             </nav>
         </aside>
 
         <main class="main-content">
-            <div class="content">
-                <div class="page-view active" id="officer-dashboard-page">
-                    <h1>Treasurer Clearance Dashboard</h1>
-                    
-                    <div class="summary-banner">
-                        <div class="summary-item">
-                            <span class="label">Total Outstanding</span>
-                            <span class="value" style="color: #e74c3c;">₱12,500</span>
+            <!-- Reports Page -->
+            <div class="page-view active" id="reports-page">
+                <h1>Reports & Analytics</h1>
+                <p class="page-subtitle">Generate reports and view clearance statistics</p>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Generate Report</h2>
+                    </div>
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label>Report Type</label>
+                            <select>
+                                <option>Clearance Summary</option>
+                                <option>Payment Records</option>
+                                <option>Sanction Report</option>
+                                <option>Activity Log Export</option>
+                            </select>
                         </div>
-                        <div class="summary-item">
-                            <span class="label">Collected Today</span>
-                            <span class="value" style="color: #27ae60;">₱3,200</span>
+                        <div class="filter-group">
+                            <label>Date Range</label>
+                            <select>
+                                <option>Today</option>
+                                <option>This Week</option>
+                                <option>This Month</option>
+                                <option>Custom Range</option>
+                            </select>
                         </div>
-                        <div class="summary-item">
-                            <span class="label">Pending Payments</span>
-                            <span class="value">25</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="label">Queue Status</span>
-                            <span class="value">12 pending</span>
+                        <div class="filter-group">
+                            <label>Format</label>
+                            <select>
+                                <option>PDF</option>
+                                <option>Excel</option>
+                                <option>CSV</option>
+                            </select>
                         </div>
                     </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon pending">💰</div>
-                            <div class="stat-info">
-                                <h3>Unpaid Sanctions</h3>
-                                <p class="stat-number">25</p>
-                                <span class="stat-change">₱12,500 total</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon approved">✅</div>
-                            <div class="stat-info">
-                                <h3>Paid This Week</h3>
-                                <p class="stat-number">18</p>
-                                <span class="stat-change positive">₱9,000 collected</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon warning">⚠️</div>
-                            <div class="stat-info">
-                                <h3>Partial Payments</h3>
-                                <p class="stat-number">8</p>
-                                <span class="stat-change">₱4,200 remaining</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon success">🎯</div>
-                            <div class="stat-info">
-                                <h3>Collection Rate</h3>
-                                <p class="stat-number">78%</p>
-                                <span class="stat-change">+5% from last month</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid-layout">
-                        <div class="section">
-                            <div class="section-header">
-                                <h2>Payment Collection (This Week)</h2>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="approvalChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="section">
-                            <div class="section-header">
-                                <h2>Sanction Fee Overview</h2>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="queueChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Quick Actions</h2>
-                        </div>
-                        <div class="quick-actions-grid">
-                            <button class="quick-action-btn" onclick="showPage('post-sanction-page')">
-                                <span class="icon">➕</span>
-                                <span class="text">Post Sanction</span>
-                            </button>
-                            <button class="quick-action-btn" onclick="showPage('sanction-fees-page')">
-                                <span class="icon">💳</span>
-                                <span class="text">View All Fees</span>
-                            </button>
-                            <button class="quick-action-btn" onclick="alert('Record Payment feature coming soon')">
-                                <span class="icon">💵</span>
-                                <span class="text">Record Payment</span>
-                            </button>
-                            <button class="quick-action-btn" onclick="showPage('clearance-queue-page')">
-                                <span class="icon">📋</span>
-                                <span class="text">View Queue</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Recent Activity</h2>
-                        </div>
-                        <div class="activity-feed">
-                            <div class="activity-item approved">
-                                <span class="activity-icon">💵</span>
-                                <div class="activity-content">
-                                    <p><strong>Carol Egonio</strong> - Payment Received: ₱500</p>
-                                    <span class="activity-time">5 minutes ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item pending">
-                                <span class="activity-icon">➕</span>
-                                <div class="activity-content">
-                                    <p><strong>Maria Santos</strong> - Sanction Fee Posted: ₱500</p>
-                                    <span class="activity-time">12 minutes ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item approved">
-                                <span class="activity-icon">✓</span>
-                                <div class="activity-content">
-                                    <p><strong>John Doe</strong> - Clearance Approved</p>
-                                    <span class="activity-time">25 minutes ago</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <button class="btn btn-primary" onclick="alert('Report generated successfully!')">Generate Report</button>
                 </div>
 
-                <div class="page-view" id="sanction-fees-page">
-                    <h1>Sanction Fees Management</h1>
-                    
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Students with Sanction Fees</h2>
-                            <button class="btn-primary" onclick="showPage('post-sanction-page')">➕ Post New Sanction</button>
-                        </div>
-
-                        <div class="filters-container">
-                            <div class="filter-group">
-                                <label>Search</label>
-                                <input type="text" placeholder="Student ID, Name...">
-                            </div>
-                            <div class="filter-group">
-                                <label>Payment Status</label>
-                                <select>
-                                    <option>All Status</option>
-                                    <option>Unpaid</option>
-                                    <option>Partial</option>
-                                    <option>Paid</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="sanction-cards">
-                            <div class="sanction-card">
-                                <div class="sanction-card-header">
-                                    <div class="student-info">
-                                        <h3>John Doe</h3>
-                                        <p>2021-12345 • BSIT 3rd Year</p>
-                                    </div>
-                                    <div class="fee-badge">₱500</div>
-                                </div>
-                                <div class="activity-details">
-                                    <p><strong>Activity:</strong> General Assembly</p>
-                                    <p><strong>Date:</strong> December 1, 2025</p>
-                                    <p><strong>Reason:</strong> Did Not Attend</p>
-                                    <p><strong>Due Date:</strong> December 15, 2025</p>
-                                </div>
-                                <div class="card-actions">
-                                    <button class="btn-success">Record Payment</button>
-                                    <button class="btn-secondary">View Details</button>
-                                </div>
-                            </div>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Processed</h3>
+                        <p class="stat-number">145</p>
+                        <span class="stat-change">This semester</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Approval Rate</h3>
+                        <p class="stat-number">89%</p>
+                        <span class="stat-change">+5% from last semester</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Average Processing Time</h3>
+                        <p class="stat-number">2.3</p>
+                        <span class="stat-change">Days</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Follow-up Rate</h3>
+                        <p class="stat-number">11%</p>
+                        <span class="stat-change">Of total requests</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="page-view" id="post-sanction-page">
-                    <h1>Post New Sanction Fee</h1>
-                    
-                    <div class="section">
-                        <form id="sanctionForm" onsubmit="postSanction(event)">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Student ID *</label>
-                                    <input type="text" required placeholder="e.g., 2021-12345">
-                                </div>
-                                <div class="form-group">
-                                    <label>Student Name *</label>
-                                    <input type="text" required placeholder="Full Name">
-                                </div>
-                            </div>
+            <!-- Student Clearance Page -->
+            <div class="page-view" id="student-clearance-page">
+                <h1>Student Clearance Management</h1>
+                <p class="page-subtitle">Track and manage student clearance status</p>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Program *</label>
-                                    <select required>
-                                        <option value="">Select Program</option>
-                                        <option>BSIT</option>
-                                        <option>BSCS</option>
-                                        <option>BSCE</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Year Level *</label>
-                                    <select required>
-                                        <option value="">Select Year</option>
-                                        <option>1st Year</option>
-                                        <option>2nd Year</option>
-                                        <option>3rd Year</option>
-                                        <option>4th Year</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Activity Name *</label>
-                                <input type="text" required placeholder="e.g., General Assembly">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Activity Date *</label>
-                                <input type="date" required>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Sanction Amount (₱) *</label>
-                                    <input type="number" required min="0" step="0.01" placeholder="500.00">
-                                </div>
-                                <div class="form-group">
-                                    <label>Due Date</label>
-                                    <input type="date">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Reason for Absence/Sanction *</label>
-                                <select required>
-                                    <option value="">Select Reason</option>
-                                    <option>Did Not Attend</option>
-                                    <option>Late Arrival (30+ minutes)</option>
-                                    <option>Early Departure</option>
-                                    <option>No Excuse Letter</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Additional Notes</label>
-                                <textarea placeholder="Any additional information..."></textarea>
-                            </div>
-
-                            <button type="submit" class="btn-primary">Post Sanction Fee</button>
-                        </form>
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Student Clearance Status</h2>
                     </div>
-                </div>
-
-                <div class="page-view" id="clearance-queue-page">
-                    <h1>Clearance Queue</h1>
                     
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Students Pending Clearance</h2>
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label>Search</label>
+                            <input type="text" id="studentSearch" placeholder="Student ID, Name..." onkeyup="filterStudents()">
                         </div>
-
-                        <div class="filters-container">
-                            <div class="filter-group">
-                                <label>Search</label>
-                                <input type="text" placeholder="Student ID, Name...">
-                            </div>
-                            <div class="filter-group">
-                                <label>Program</label>
-                                <select>
-                                    <option>All Programs</option>
-                                    <option>BSIT</option>
-                                    <option>BSCS</option>
-                                </select>
-                            </div>
+                        <div class="filter-group">
+                            <label>Year Level</label>
+                            <select id="studentYearFilter" onchange="filterStudents()">
+                                <option value="">All Years</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
                         </div>
-
-                        <div class="queue-list">
-                            <div class="queue-item">
-                                <div class="queue-info">
-                                    <h3>Maria Santos</h3>
-                                    <p>2021-67890 • BSCS 2nd Year</p>
-                                    <p>Submitted: December 8, 2025</p>
-                                </div>
-                                <div class="queue-actions">
-                                    <button class="btn-success">Approve</button>
-                                    <button class="btn-secondary">Reject</button>
-                                    <button class="btn-secondary">Details</button>
-                                </div>
-                            </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="studentStatusFilter" onchange="filterStudents()">
+                                <option value="">All Status</option>
+                                <option value="complete">Complete</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
                         </div>
                     </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Program</th>
+                                <th>Year Level</th>
+                                <th>Officer Treasurer</th>
+                                <th>Officer Adviser</th>
+                                <th>Librarian</th>
+                                <th>Dean</th>
+                                <th>Overall Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr>
+                                <td>2301436</td>
+                                <td>Egonio, Carol Jean</td>
+                                <td>BSIT</td>
+                                <td>3rd Year</td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge pending">PENDING</span></td>
+                                <td><span class="badge pending">INCOMPLETE</span></td>
+                                <td>
+                                    <button class="btn-sm btn-warning" onclick="addComment('2301436')">Comment</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2301536</td>
+                                <td>De la Cruz, Juan</td>
+                                <td>BSCS</td>
+                                <td>2nd Year</td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge pending">PENDING</span></td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge pending">INCOMPLETE</span></td>
+                                <td>
+                                    <button class="btn-sm btn-warning" onclick="addComment('2301536')">Comment</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2301636</td>
+                                <td>Doe, John</td>
+                                <td>BSIT</td>
+                                <td>4th Year</td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge rejected">REJECTED</span></td>
+                                <td><span class="badge approved">DONE</span></td>
+                                <td><span class="badge rejected">REJECTED</span></td>
+                                <td>
+                                    <button class="btn-sm btn-warning" onclick="addComment('2301636')">Comment</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-                <div class="page-view" id="payment-records-page">
-                    <h1>Payment Records</h1>
+            <!-- Clearance Approvers Page -->
+            <div class="page-view" id="clearance-approver-page">
+                <h1>Clearance Approvers Management</h1>
+                <p class="page-subtitle">Manage clearance approvers for organizations</p>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Clearance Approver List</h2>
+                        <button class="btn btn-primary" onclick="openModal('addApproverModal')">➕ Add Approver</button>
+                    </div>
                     
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Transaction History</h2>
-                            <button class="btn-primary">📥 Export Records</button>
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label>Search</label>
+                            <input type="text" id="approverSearch" placeholder="Name or organization..." onkeyup="filterApprovers()">
+                        </div>
+                        <div class="filter-group">
+                            <label>Role Type</label>
+                            <select id="approverRoleFilter" onchange="filterApprovers()">
+                                <option value="">All Role Types</option>
+                                <option value="Student Leader">Student Leader</option>
+                                <option value="Faculty Adviser">Faculty Adviser</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="approverStatusFilter" onchange="filterApprovers()">
+                                <option value="">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Title</th>
+                                <th>Department</th>
+                                <th>Organization</th>
+                                <th>Role</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approverTableBody">
+                            <tr>
+                                <td>APR-001</td>
+                                <td>Ramon Cruz</td>
+                                <td>Student</td>
+                                <td>Information Technology</td>
+                                <td>BSIT Digits Organization</td>
+                                <td><span class="badge badge-warning">Student President</span></td>
+                                <td><span class="badge badge-secondary">Student Leader</span></td>
+                                <td><span class="badge approved">Active</span></td>
+                                <td>
+                                    <button class="btn-sm btn-warning" onclick="editApprover('APR-001')">Edit</button>
+                                    <button class="btn-sm btn-danger" onclick="deleteApprover('APR-001')">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>APR-002</td>
+                                <td>John Doe</td>
+                                <td>Student</td>
+                                <td>Information Technology</td>
+                                <td>BSIT Digits Organization</td>
+                                <td><span class="badge badge-warning">Student Treasurer</span></td>
+                                <td><span class="badge badge-secondary">Student Leader</span></td>
+                                <td><span class="badge approved">Active</span></td>
+                                <td>
+                                    <button class="btn-sm btn-warning" onclick="editApprover('APR-002')">Edit</button>
+                                    <button class="btn-sm btn-danger" onclick="deleteApprover('APR-002')">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>APR-007</td>
+                                <td>Prof. Allen Chen</td>
+                                <td>Faculty</td>
+                                <td>Information Technology</td>
+                                <td>BSIT Digits Organization</td>
+                                <td><span class="badge badge-success">Faculty Adviser</span></td>
+                                <td><span class="badge badge-secondary">Faculty Adviser</span></td>
+                                <td><span class="badge approved">Active</span></td>
+                                <td>
+                                    <button class="btn-sm btn-warning" onclick="editApprover('APR-007')">Edit</button>
+                                    <button class="btn-sm btn-danger" onclick="deleteApprover('APR-007')">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Clearance Configuration Page -->
+            <div class="page-view" id="clearance-config-page">
+                <h1>Clearance Configuration</h1>
+                <p class="page-subtitle">Configure clearance requirements and settings</p>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>System Configuration</h2>
+                    </div>
+
+                    <form id="clearanceConfigForm">
+                        <div class="form-group">
+                            <label>Default Clearance Requirements</label>
+                            <textarea placeholder="List default clearance requirements..." style="min-height: 150px;">Library Clearance
+Registrar Clearance
+Treasurer Clearance
+Dean's Clearance
+Student Affairs Clearance
+Faculty Adviser Clearance</textarea>
                         </div>
 
-                        <div class="filters-container">
-                            <div class="filter-group">
-                                <label>Search</label>
-                                <input type="text" placeholder="Student, Transaction ID...">
-                            </div>
-                            <div class="filter-group">
-                                <label>Date Range</label>
-                                <select>
-                                    <option>All Time</option>
-                                    <option>Today</option>
-                                    <option>This Week</option>
-                                    <option>This Month</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label>Auto-Approval Threshold (days)</label>
+                            <input type="number" value="7" min="1">
                         </div>
 
-                        <div class="payment-history">
-                            <div class="payment-item">
-                                <div class="payment-info">
-                                    <p><strong>Carol Egonio</strong> - 2021-54321</p>
-                                    <p>General Assembly Fee</p>
-                                    <span class="activity-time">December 9, 2025 - 2:30 PM</span>
-                                </div>
-                                <div class="payment-amount">₱500</div>
-                            </div>
+                        <div class="form-group">
+                            <label>Maximum Processing Time (days)</label>
+                            <input type="number" value="14" min="1">
                         </div>
+
+                        <div class="form-group">
+                            <label>Require Approver Comments</label>
+                            <select>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Configuration</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div class="page-view" id="profile-page">
+                <h1>My Profile</h1>
+                <p class="page-subtitle">View and manage your account information</p>
+
+                <div class="section" style="max-width: 600px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold;" id="profileAvatarLarge">T</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="profileNameInput" value="Treasurer" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Office / Organization</label>
+                        <input type="text" id="profileOfficeInput" value="Student Organization" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="profileContactInput" value="+63 999 123 4567" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="profileEmailInput" value="treasurer@university.edu" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="section-header" style="margin-top: 40px;">
+                        <h2>Account Settings</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="currentPassword" placeholder="Enter your current password">
+                    </div>
+
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPassword" placeholder="Leave blank to keep current password">
+                        <small style="color: #7f8c8d;">Min. 8 characters with uppercase, lowercase, and numbers</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
+                    </div>
+
+                    <div class="action-buttons" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="updateProfile()">Update Password</button>
+                        <button class="btn btn-secondary" onclick="editProfileMode()">Edit Profile Information</button>
+                        <button class="btn btn-danger" onclick="logout()">Logout</button>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- View Details Modal -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Clearance Details</h2>
+                <button class="close-btn" onclick="closeModal('detailsModal')">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Comment Modal -->
+    <div class="modal" id="commentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="commentModalTitle">Add Comment</h2>
+                <button class="close-btn" onclick="closeModal('commentModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Comment / Notes *</label>
+                <textarea id="commentText" placeholder="Enter your comment or notes..."></textarea>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="submitAction()">Submit</button>
+                <button class="btn btn-secondary" onclick="closeModal('commentModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Approver Modal -->
+    <div class="modal" id="addApproverModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Clearance Approver</h2>
+                <button class="close-btn" onclick="closeModal('addApproverModal')">&times;</button>
+            </div>
+            <form onsubmit="submitAddApprover(event)">
+                <div class="form-group">
+                    <label>Faculty ID / Employee ID *</label>
+                    <input type="text" id="facultyID" required placeholder="e.g., FAC-2024-001">
+                    <small style="color: #7f8c8d;">Unique identifier for the approver</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="approverName" required placeholder="e.g., Prof. John Smith">
+                </div>
+
+                <div class="form-group">
+                    <label>Organization *</label>
+                    <select id="approverOrganization" required>
+                        <option value="">-- Select Organization --</option>
+                        <option value="BSIT Digits Organization">BSIT Digits Organization</option>
+                        <option value="BSCS Lambda Organization">BSCS Lambda Organization</option>
+                        <option value="BSCE Engineering Organization">BSCE Engineering Organization</option>
+                        <option value="Academic Affairs">Academic Affairs</option>
+                        <option value="Student Affairs">Student Affairs</option>
+                        <option value="Finance Office">Finance Office</option>
+                        <option value="Library Services">Library Services</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="approverEmail" required placeholder="e.g., john.smith@university.edu">
+                    <small style="color: #7f8c8d;">Notification will be sent to this email</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Email Address *</label>
+                    <input type="email" id="confirmEmail" required placeholder="Confirm email address">
+                    <small style="color: #7f8c8d;" id="emailMatchError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label>Default Clearance Requirements *</label>
+                    <div style="border: 1px solid #ddd; border-radius: 6px; padding: 12px; max-height: 150px; overflow-y: auto; background: #f9f9f9;">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <input type="checkbox" name="requirements" value="Library Clearance" id="req1"> 
+                            <label for="req1" style="margin-left: 6px; margin-bottom: 0; cursor: pointer;">Library Clearance</label>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <input type="checkbox" name="requirements" value="Registrar Clearance" id="req2"> 
+                            <label for="req2" style="margin-left: 6px; margin-bottom: 0; cursor: pointer;">Registrar Clearance</label>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <input type="checkbox" name="requirements" value="Treasurer Clearance" id="req3"> 
+                            <label for="req3" style="margin-left: 6px; margin-bottom: 0; cursor: pointer;">Treasurer Clearance</label>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <input type="checkbox" name="requirements" value="Dean's Clearance" id="req4"> 
+                            <label for="req4" style="margin-left: 6px; margin-bottom: 0; cursor: pointer;">Dean's Clearance</label>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <input type="checkbox" name="requirements" value="Student Affairs Clearance" id="req5"> 
+                            <label for="req5" style="margin-left: 6px; margin-bottom: 0; cursor: pointer;">Student Affairs Clearance</label>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <input type="checkbox" name="requirements" value="Faculty Adviser Clearance" id="req6"> 
+                            <label for="req6" style="margin-left: 6px; margin-bottom: 0; cursor: pointer;">Faculty Adviser Clearance</label>
+                        </div>
+                    </div>
+                    <small style="color: #7f8c8d;">Select the clearance types this approver will handle</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" id="approverPassword" required placeholder="Enter a strong password">
+                    <small style="color: #7f8c8d;">Min. 8 characters with uppercase, lowercase, and numbers</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password *</label>
+                    <input type="password" id="confirmPassword" required placeholder="Confirm password">
+                    <small style="color: #7f8c8d;" id="passwordMatchError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="agreeTerms" required> I agree to the terms and conditions
+                    </label>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Add Approver & Send Notification</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addApproverModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Sanction Modal -->
+    <div class="modal" id="addSanctionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Sanction</h2>
+                <button class="close-btn" onclick="closeModal('addSanctionModal')">&times;</button>
+            </div>
+            <form onsubmit="addSanction(event)">
+                <div class="form-group">
+                    <label>Student ID *</label>
+                    <input type="text" required placeholder="e.g., 2021-12345">
+                </div>
+                <div class="form-group">
+                    <label>Activity *</label>
+                    <input type="text" required placeholder="e.g., General Assembly">
+                </div>
+                <div class="form-group">
+                    <label>Amount (₱) *</label>
+                    <input type="number" required min="0" step="0.01" placeholder="500.00">
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date">
+                </div>
+                <div class="form-group">
+                    <label>Reason *</label>
+                    <textarea required placeholder="Reason for sanction..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Sanction</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        function showPage(pageId) {
-            document.querySelectorAll('.page-view').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-        }
+        // Sample data
+        let queueData = [
+            { id: 1, studentId: '2021-67890', name: 'Maria Santos', program: 'BSCS', year: '2nd Year', balance: 0, status: 'pending', submitted: '2025-12-08', selected: false },
+            { id: 2, studentId: '2021-12345', name: 'John Doe', program: 'BSIT', year: '3rd Year', balance: 200, status: 'pending', submitted: '2025-12-09', selected: false },
+            { id: 3, studentId: '2021-54321', name: 'Carol Egonio', program: 'BSIT', year: '3rd Year', balance: 0, status: 'pending', submitted: '2025-12-10', selected: false },
+            { id: 4, studentId: '2021-99999', name: 'Peter Cruz', program: 'BSCE', year: '4th Year', balance: 1500, status: 'pending', submitted: '2025-12-09', selected: false }
+        ];
 
-        function toggleSubmenu(submenuId, navItem) {
-            const submenu = document.getElementById(submenuId);
-            submenu.classList.toggle('active');
-            const chevron = navItem.querySelector('.chevron');
-            if (chevron) {
-                chevron.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
-            }
-        }
+        let currentAction = null;
+        let currentStudent = null;
 
-        function postSanction(e) {
-            e.preventDefault();
-            alert('Sanction fee posted successfully!');
-            showPage('sanction-fees-page');
-        }
-
-        // Initialize Charts
-        window.addEventListener('DOMContentLoaded', () => {
-            const approvalCtx = document.getElementById('approvalChart');
-            if (approvalCtx) {
-                new Chart(approvalCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        datasets: [{
-                            label: 'Payments Collected',
-                            data: [1200, 1900, 1500, 2100, 1800, 2400, 3200],
-                            borderColor: '#667eea',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return '₱' + value;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            const queueCtx = document.getElementById('queueChart');
-            if (queueCtx) {
-                new Chart(queueCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Unpaid', 'Partial', 'Paid'],
-                        datasets: [{
-                            data: [25, 8, 18],
-                            backgroundColor: ['#e74c3c', '#f39c12', '#27ae60']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            }
+    // Page navigation
+    function showPage(pageId) {
+        document.querySelectorAll('.page-view').forEach(page => {
+            page.classList.remove('active');
         });
-    </script>
-</body>
-</html>
+        document.getElementById(pageId).classList.add('active');
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.target.closest('.nav-item').classList.add('active');
+
+        if (pageId === 'clearance-queue-page') {
+            renderQueue();
+        }
+    }
+
+    // Render queue table
+    function renderQueue() {
+        const tbody = document.getElementById('queueTableBody');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const programFilter = document.getElementById('programFilter').value;
+        const yearFilter = document.getElementById('yearFilter').value;
+
+        let filtered = queueData.filter(student => {
+            const matchesSearch = student.studentId.toLowerCase().includes(searchTerm) || 
+                                 student.name.toLowerCase().includes(searchTerm);
+            const matchesStatus = statusFilter === 'all' || student.status === statusFilter;
+            const matchesProgram = programFilter === 'all' || student.program === programFilter;
+            const matchesYear = yearFilter === 'all' || student.year === yearFilter;
+            
+            return matchesSearch && matchesStatus && matchesProgram && matchesYear;
+        });
+
+        tbody.innerHTML = filtered.map(student => `
+            <tr>
+                <td><input type="checkbox" class="checkbox" ${student.selected ? 'checked' : ''} onchange="toggleSelect(${student.id})"></td>
+                <td>${student.studentId}</td>
+                <td>${student.name}</td>
+                <td>${student.program}</td>
+                <td>${student.year}</td>
+                <td>₱${student.balance.toFixed(2)}</td>
+                <td><span class="status-badge ${student.status}">${student.status.charAt(0).toUpperCase() + student.status.slice(1)}</span></td>
+                <td>${student.submitted}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-success btn-sm" onclick="openActionModal(${student.id}, 'approve')">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="openActionModal(${student.id}, 'reject')">Reject</button>
+                        <button class="btn btn-warning btn-sm" onclick="openActionModal(${student.id}, 'follow-up')">Follow-up</button>
+                        <button class="btn btn-secondary btn-sm" onclick="viewDetails(${student.id})">Details</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        updateSelectedCount();
+    }
+
+    // Filter queue
+    function filterQueue() {
+        renderQueue();
+    }
+
+    // Toggle select all
+    function toggleSelectAll() {
+        const checked = document.getElementById('selectAll').checked;
+        queueData.forEach(student => student.selected = checked);
+        renderQueue();
+    }
+
+    // Toggle individual selection
+    function toggleSelect(id) {
+        const student = queueData.find(s => s.id === id);
+        if (student) {
+            student.selected = !student.selected;
+            updateSelectedCount();
+        }
+    }
+
+    // Update selected count
+    function updateSelectedCount() {
+        const count = queueData.filter(s => s.selected).length;
+        document.getElementById('selectedCount').textContent = `${count} selected`;
+        document.getElementById('bulkActionsBar').style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    // Open action modal
+    function openActionModal(id, action) {
+        currentStudent = queueData.find(s => s.id === id);
+        currentAction = action;
+        
+        const titles = {
+            'approve': 'Approve Clearance',
+            'reject': 'Reject Clearance',
+            'follow-up': 'Request Follow-up'
+        };
+        
+        document.getElementById('commentModalTitle').textContent = titles[action];
+        document.getElementById('commentText').value = '';
+        openModal('commentModal');
+    }
+
+    // Submit action
+    function submitAction() {
+        const comment = document.getElementById('commentText').value;
+        
+        if (!comment.trim()) {
+            alert('Please enter a comment');
+            return;
+        }
+
+        if (currentStudent && currentAction) {
+            currentStudent.status = currentAction === 'follow-up' ? 'follow-up' : currentAction === 'approve' ? 'approved' : 'rejected';
+            
+            // Log the action
+            logAction(currentStudent, currentAction, comment);
+            
+            showAlert(`Clearance ${currentAction}d for ${currentStudent.name}`, 'success');
+            closeModal('commentModal');
+            renderQueue();
+        }
+    }
+
+    // Bulk actions
+    function bulkApprove() {
+        if (confirm('Approve all selected clearances?')) {
+            const selected = queueData.filter(s => s.selected);
+            selected.forEach(student => {
+                student.status = 'approved';
+                logAction(student, 'approve', 'Bulk approval');
+            });
+            showAlert(`${selected.length} clearances approved`, 'success');
+            clearSelection();
+        }
+    }
+
+    function bulkReject() {
+        const comment = prompt('Enter rejection reason:');
+        if (comment) {
+            const selected = queueData.filter(s => s.selected);
+            selected.forEach(student => {
+                student.status = 'rejected';
+                logAction(student, 'reject', comment);
+            });
+            showAlert(`${selected.length} clearances rejected`, 'success');
+            clearSelection();
+        }
+    }
+
+    function bulkFollowUp() {
+        const comment = prompt('Enter follow-up notes:');
+        if (comment) {
+            const selected = queueData.filter(s => s.selected);
+            selected.forEach(student => {
+                student.status = 'follow-up';
+                logAction(student, 'follow-up', comment);
+            });
+            showAlert(`${selected.length} follow-ups requested`, 'success');
+            clearSelection();
+        }
+    }
+
+    function clearSelection() {
+        queueData.forEach(s => s.selected = false);
+        document.getElementById('selectAll').checked = false;
+        renderQueue();
+    }
+
+    // View details
+    function viewDetails(id) {
+        const student = queueData.find(s => s.id === id);
+        if (student) {
+            document.getElementById('modalBody').innerHTML = `
+                <div class="student-details">
+                    <div class="detail-row">
+                        <strong>Student ID:</strong>
+                        <span>${student.studentId}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Name:</strong>
+                        <span>${student.name}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Program:</strong>
+                        <span>${student.program}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Year Level:</strong>
+                        <span>${student.year}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Outstanding Balance:</strong>
+                        <span style="color: ${student.balance > 0 ? '#e74c3c' : '#27ae60'}; font-weight: bold;">₱${student.balance.toFixed(2)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Status:</strong>
+                        <span class="status-badge ${student.status}">${student.status.charAt(0).toUpperCase() + student.status.slice(1)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Submitted:</strong>
+                        <span>${student.submitted}</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="closeModal('detailsModal'); openActionModal(${student.id}, 'approve')">Approve</button>
+                    <button class="btn btn-danger" onclick="closeModal('detailsModal'); openActionModal(${student.id}, 'reject')">Reject</button>
+                    <button class="btn btn-warning" onclick="closeModal('detailsModal'); openActionModal(${student.id}, 'follow-up')">Request Follow-up</button>
+                </div>
+            `;
+            openModal('detailsModal');
+        }
+    }
+
+    // Log action
+    function logAction(student, action, comment) {
+        console.log(`Action: ${action}, Student: ${student.name} (${student.studentId}), Comment: ${comment}, Time: ${new Date().toISOString()}`);
+    }
+
+    // Show alert
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.textContent = message;
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
+    }
+
+    // Modal functions
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Add sanction
+    function addSanction(e) {
+        e.preventDefault();
+        showAlert('Sanction added successfully!', 'success');
+        closeModal('addSanctionModal');
+    }
+
+    // Settings Dropdown Functions
+    function toggleSettingsDropdown() {
+        const dropdown = document.getElementById('settingsDropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('settingsDropdown');
+        const settingsBtn = document.querySelector('.settings-btn');
+        if (!e.target.closest('.settings-dropdown')) {
+            dropdown.classList.remove('active');
+        }
+    });
+
+    function editProfile() {
+        const name = prompt('Enter your full name:', document.getElementById('profileName').textContent);
+        if (name) {
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('profileInitial').textContent = name.charAt(0).toUpperCase();
+            showAlert('Profile updated successfully!', 'success');
+        }
+    }
+
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            showAlert('Logging out...', 'info');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+    }
+
+    // Add Approver Functions
+    function submitAddApprover(e) {
+        e.preventDefault();
+
+        // Get form values
+        const facultyID = document.getElementById('facultyID').value.trim();
+        const approverName = document.getElementById('approverName').value.trim();
+        const organization = document.getElementById('approverOrganization').value;
+        const email = document.getElementById('approverEmail').value.trim();
+        const confirmEmail = document.getElementById('confirmEmail').value.trim();
+        const password = document.getElementById('approverPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validate emails match
+        if (email !== confirmEmail) {
+            document.getElementById('emailMatchError').textContent = 'Email addresses do not match';
+            document.getElementById('emailMatchError').style.display = 'block';
+            return;
+        }
+
+        // Validate passwords match
+        if (password !== confirmPassword) {
+            document.getElementById('passwordMatchError').textContent = 'Passwords do not match';
+            document.getElementById('passwordMatchError').style.display = 'block';
+            return;
+        }
+
+        // Validate password strength
+        if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+            showAlert('Password must be at least 8 characters with uppercase, lowercase, and numbers', 'error');
+            return;
+        }
+
+        // Get selected clearance requirements
+        const requirements = Array.from(document.querySelectorAll('input[name="requirements"]:checked'))
+            .map(checkbox => checkbox.value);
+
+        if (requirements.length === 0) {
+            showAlert('Please select at least one clearance requirement', 'error');
+            return;
+        }
+
+        // Create approver object
+        const approver = {
+            facultyID: facultyID,
+            name: approverName,
+            organization: organization,
+            email: email,
+            requirements: requirements,
+            password: btoa(password), // Simple base64 encoding (not secure for production)
+            dateAdded: new Date().toISOString(),
+            status: 'Active'
+        };
+
+        // Send email notification
+        sendApproverNotification(approver);
+    }
+
+    function sendApproverNotification(approver) {
+        // Simulate email sending (in production, this would be a server-side operation)
+        const emailContent = `
+        <h2>Welcome to the Clearance Approver System</h2>
+        
+        <p>Dear ${approver.name},</p>
+        
+        <p>You have been granted permission to be a Clearance Approver in the Officer Clearance System.</p>
+        
+        <h3>Your Account Details:</h3>
+        <ul>
+            <li><strong>Faculty ID:</strong> ${approver.facultyID}</li>
+            <li><strong>Name:</strong> ${approver.name}</li>
+            <li><strong>Organization:</strong> ${approver.organization}</li>
+            <li><strong>Email:</strong> ${approver.email}</li>
+            <li><strong>Account Created:</strong> ${new Date(approver.dateAdded).toLocaleString()}</li>
+        </ul>
+        
+        <h3>Assigned Clearance Requirements:</h3>
+        <ul>
+            ${approver.requirements.map(req => `<li>${req}</li>`).join('')}
+        </ul>
+        
+        <p>You can now access the system using your Faculty ID and the password you provided during registration.</p>
+        
+        <p style="color: #e74c3c;"><strong>Important:</strong> Please keep your login credentials secure and change your password on first login.</p>
+        
+        <p>If you have any questions or need technical support, please contact the Student Organization office.</p>
+        
+        <p>Best regards,<br>
+        <strong>Officer Clearance System Administration</strong></p>
+        `;
+
+        // Log the approver data (in production, send to server)
+        console.log('New Approver Created:', approver);
+        console.log('Email would be sent to:', approver.email);
+        console.log('Email Content:', emailContent);
+
+        // Store approver data (simulate database save)
+        let approvers = JSON.parse(localStorage.getItem('approvers')) || [];
+        approvers.push(approver);
+        localStorage.setItem('approvers', JSON.stringify(approvers));
+
+        // Show success message
+        showAlert(`Approver ${approver.name} added successfully! Notification email sent to ${approver.email}`, 'success');
+        
+        // Reset form
+        document.getElementById('addApproverModal').querySelector('form').reset();
+        
+        // Clear error messages
+        document.getElementById('emailMatchError').style.display = 'none';
+        document.getElementById('passwordMatchError').style.display = 'none';
+        
+        // Close modal
+        closeModal('addApproverModal');
+
+        // In production, you would send this via AJAX:
+        /*
+        fetch('/api/approvers/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ...approver,
+                emailContent: emailContent
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(`Approver added and notification sent to ${approver.email}`, 'success');
+                closeModal('addApproverModal');
+            } else {
+                showAlert('Error adding approver: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            showAlert('Error: ' + error.message, 'error');
+        });
+        */
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+        renderQueue();
+    });
+</script>

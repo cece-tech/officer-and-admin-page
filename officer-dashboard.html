@@ -5,93 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Officer Clearance Dashboard - Student Clearance System</title>
     <link rel="stylesheet" href="officer-style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
     <div class="dashboard">
-        <!-- Sidebar -->
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">
-                <h2>Officer Portal</h2>
-                <p>Clearance Dashboard</p>
-            </div>
-            
-            <div class="search-bar-sidebar">
-                <input type="text" id="menuSearch" placeholder="Search menu...">
+                <h2>Staff/Approver Portal</h2>
+                <p>Clearance Management</p>
             </div>
             
             <nav class="nav">
-                <div class="nav-item active" data-page="officer-dashboard">
+                <div class="nav-item active" onclick="showPage('dashboard-page')">
                     <span class="icon">📊</span>
                     <span>Dashboard</span>
                 </div>
                 
-                <div class="nav-item" data-page="clearance-queue">
+                <div class="nav-item" onclick="showPage('queue-page')">
                     <span class="icon">📋</span>
                     <span>Clearance Queue</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="queueSubmenu">
-                    <div class="submenu-item" data-action="pending-queue">
-                        <span class="icon">⏳</span>
-                        <span>Pending Queue</span>
-                    </div>
-                    <div class="submenu-item" data-action="bulk-actions">
-                        <span class="icon">✓</span>
-                        <span>Bulk Actions</span>
-                    </div>
-                    <div class="submenu-item" data-action="follow-ups">
-                        <span class="icon">🔔</span>
-                        <span>Follow-ups</span>
-                    </div>
                 </div>
                 
-                <div class="nav-item" data-page="processed-items">
-                    <span class="icon">✅</span>
-                    <span>Processed Items</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="processedSubmenu">
-                    <div class="submenu-item" data-action="approved-items">
-                        <span class="icon">✓</span>
-                        <span>Approved</span>
-                    </div>
-                    <div class="submenu-item" data-action="rejected-items">
-                        <span class="icon">✕</span>
-                        <span>Rejected</span>
-                    </div>
+                <div class="nav-item" onclick="showPage('follow-ups-page')">
+                    <span class="icon">🔔</span>
+                    <span>Follow-ups</span>
                 </div>
                 
-                <div class="nav-item" data-page="officer-reports">
-                    <span class="icon">📈</span>
-                    <span>Reports</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="reportsSubmenu">
-                    <div class="submenu-item" data-action="performance-report">
-                        <span class="icon">📊</span>
-                        <span>My Performance</span>
-                    </div>
-                    <div class="submenu-item" data-action="export-report">
-                        <span class="icon">📥</span>
-                        <span>Export Data</span>
-                    </div>
+                <div class="nav-item" onclick="showPage('audit-logs-page')">
+                    <span class="icon">📝</span>
+                    <span>Audit Logs</span>
                 </div>
                 
-                <div class="nav-item" data-page="officer-settings">
+                <div class="nav-item" onclick="showPage('profile-page')">
                     <span class="icon">⚙️</span>
                     <span>Settings</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="submenu" id="settingsSubmenu">
-                    <div class="submenu-item" data-action="profile-settings">
-                        <span class="icon">👤</span>
-                        <span>Profile</span>
-                    </div>
-                    <div class="submenu-item" data-action="logout-officer" onclick="logoutOfficer()">
-                        <span class="icon">🚪</span>
-                        <span>Log Out</span>
-                    </div>
                 </div>
             </nav>
         </aside>
@@ -99,146 +46,68 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="content">
-                <!-- Officer Dashboard Page -->
-                <div class="page-view active" id="officer-dashboard-page">
-                    <h1>Officer Clearance Dashboard</h1>
+                <!-- Dashboard Page -->
+                <div class="page-view active" id="dashboard-page">
+                    <h1>Dashboard</h1>
+                    <p class="page-subtitle">Overview of your clearance queue and recent activity</p>
                     
-                    <!-- Quick Summary -->
-                    <div class="summary-banner">
-                        <div class="summary-item">
-                            <span class="label">Queue Status</span>
-                            <span class="value">12 pending</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="label">Approved Today</span>
-                            <span class="value">18</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="label">Rejected Today</span>
-                            <span class="value">3</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="label">Avg. Processing Time</span>
-                            <span class="value">2.5 min</span>
-                        </div>
-                    </div>
-
-                    <!-- Statistics Grid -->
+                    <!-- Quick Stats -->
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-icon pending">⏳</div>
-                            <div class="stat-info">
-                                <h3>Pending Queue</h3>
-                                <p class="stat-number">12</p>
-                                <span class="stat-change">Awaiting review</span>
-                            </div>
+                            <h3>📋 Pending</h3>
+                            <p class="stat-number">12</p>
+                            <span>Awaiting your action</span>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon approved">✅</div>
-                            <div class="stat-info">
-                                <h3>Approved (Today)</h3>
-                                <p class="stat-number">18</p>
-                                <span class="stat-change positive">+5 from yesterday</span>
-                            </div>
+                            <h3>✅ Approved Today</h3>
+                            <p class="stat-number">18</p>
+                            <span>Successfully processed</span>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon warning">⚠️</div>
-                            <div class="stat-info">
-                                <h3>Rejected (Today)</h3>
-                                <p class="stat-number">3</p>
-                                <span class="stat-change">Needs follow-up</span>
-                            </div>
+                            <h3>❌ Rejected</h3>
+                            <p class="stat-number">3</p>
+                            <span>This week</span>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon success">🎯</div>
-                            <div class="stat-info">
-                                <h3>Follow-up Pending</h3>
-                                <p class="stat-number">7</p>
-                                <span class="stat-change">Action needed</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Section -->
-                    <div class="grid-layout">
-                        <!-- Approval Rate Chart -->
-                        <div class="section">
-                            <div class="section-header">
-                                <h2>Approval Rate (This Week)</h2>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="approvalChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Processing Time Chart -->
-                        <div class="section">
-                            <div class="section-header">
-                                <h2>Queue Overview</h2>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="queueChart"></canvas>
-                            </div>
+                            <h3>🔔 Follow-ups</h3>
+                            <p class="stat-number">7</p>
+                            <span>Pending attention</span>
                         </div>
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="section" style="margin-top: 25px;">
-                        <div class="section-header">
-                            <h2>Quick Actions</h2>
-                        </div>
-                        <div class="quick-actions-grid">
-                            <button class="quick-action-btn" onclick="goToPage('clearance-queue-page')">
-                                <span class="icon">📋</span>
-                                <span class="text">View Queue</span>
-                            </button>
-                            <button class="quick-action-btn" onclick="goToPage('bulk-actions-page')">
-                                <span class="icon">⚡</span>
-                                <span class="text">Bulk Actions</span>
-                            </button>
-                            <button class="quick-action-btn" onclick="goToPage('follow-ups-page')">
-                                <span class="icon">🔔</span>
-                                <span class="text">Follow-ups</span>
-                            </button>
-                            <button class="quick-action-btn" onclick="goToPage('approved-items-page')">
-                                <span class="icon">✓</span>
-                                <span class="text">Approved List</span>
-                            </button>
+                    <div class="section">
+                        <h2>Quick Actions</h2>
+                        <div class="action-buttons">
+                            <button class="btn-primary" onclick="showPage('queue-page')">View Clearance Queue</button>
+                            <button class="btn-secondary" onclick="showPage('follow-ups-page')">Check Follow-ups</button>
+                            <button class="btn-secondary" onclick="showPage('audit-logs-page')">View Activity Logs</button>
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
-                    <div class="section" style="margin-top: 25px;">
-                        <div class="section-header">
-                            <h2>Recent Activity</h2>
-                        </div>
-                        <div class="activity-feed">
-                            <div class="activity-item approved">
-                                <span class="activity-icon">✓</span>
-                                <div class="activity-content">
+                    <!-- Recent Activity Log -->
+                    <div class="section">
+                        <h2>Recent Activity</h2>
+                        <div class="activity-log">
+                            <div class="log-item">
+                                <span class="status approved">✓</span>
+                                <div>
                                     <p><strong>Carol Egonio</strong> - Clearance Approved</p>
-                                    <span class="activity-time">5 minutes ago</span>
+                                    <small>5 minutes ago</small>
                                 </div>
                             </div>
-                            <div class="activity-item pending">
-                                <span class="activity-icon">⏳</span>
-                                <div class="activity-content">
+                            <div class="log-item">
+                                <span class="status pending">⏳</span>
+                                <div>
                                     <p><strong>Maria Santos</strong> - Comment Added</p>
-                                    <span class="activity-time">12 minutes ago</span>
+                                    <small>12 minutes ago</small>
                                 </div>
                             </div>
-                            <div class="activity-item rejected">
-                                <span class="activity-icon">✕</span>
-                                <div class="activity-content">
+                            <div class="log-item">
+                                <span class="status rejected">✕</span>
+                                <div>
                                     <p><strong>John Doe</strong> - Clearance Rejected</p>
-                                    <span class="activity-time">25 minutes ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item approved">
-                                <span class="activity-icon">✓</span>
-                                <div class="activity-content">
-                                    <p><strong>Sofia Reyes</strong> - Clearance Approved</p>
-                                    <span class="activity-time">1 hour ago</span>
+                                    <small>25 minutes ago</small>
                                 </div>
                             </div>
                         </div>
@@ -246,238 +115,280 @@
                 </div>
 
                 <!-- Clearance Queue Page -->
-                <div class="page-view" id="clearance-queue-page">
+                <div class="page-view" id="queue-page">
                     <h1>Clearance Queue</h1>
-                    
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Students Pending Clearance</h2>
-                            <button class="btn-primary" onclick="toggleBulkSelect()">Select Multiple</button>
-                        </div>
+                    <p class="page-subtitle">Review and process student clearance requests</p>
 
-                        <!-- Filters Section -->
-                        <div class="filters-container">
+                    <div class="section">
+                        <!-- Filters -->
+                        <div class="filters-bar">
                             <div class="filter-group">
                                 <label>Search</label>
-                                <input type="text" id="queueSearch" placeholder="Student ID, Name, Email..." onkeyup="filterQueue()">
+                                <input type="text" id="queueSearch" placeholder="Student ID or Name..." onkeyup="filterQueue()">
                             </div>
                             <div class="filter-group">
                                 <label>Program</label>
-                                <select id="queueProgramFilter" onchange="filterQueue()">
-                                    <option value="">All Programs</option>
+                                <select id="programFilter" onchange="filterQueue()">
+                                    <option value="">All</option>
                                     <option value="BSIT">BSIT</option>
                                     <option value="BSCS">BSCS</option>
                                     <option value="BSCE">BSCE</option>
                                 </select>
                             </div>
                             <div class="filter-group">
-                                <label>Year Level</label>
-                                <select id="queueYearFilter" onchange="filterQueue()">
-                                    <option value="">All Years</option>
+                                <label>Year</label>
+                                <select id="yearFilter" onchange="filterQueue()">
+                                    <option value="">All</option>
                                     <option value="1">1st Year</option>
                                     <option value="2">2nd Year</option>
                                     <option value="3">3rd Year</option>
                                     <option value="4">4th Year</option>
                                 </select>
                             </div>
-                            <div class="filter-group">
-                                <label>Priority</label>
-                                <select id="queuePriorityFilter" onchange="filterQueue()">
-                                    <option value="">All Priorities</option>
-                                    <option value="high">High</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="low">Low</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label>Date Submitted</label>
-                                <select id="queueDateFilter" onchange="filterQueue()">
-                                    <option value="">All Dates</option>
-                                    <option value="today">Today</option>
-                                    <option value="this-week">This Week</option>
-                                    <option value="this-month">This Month</option>
-                                </select>
-                            </div>
-                            <button class="btn-secondary" onclick="resetFilters()">Reset Filters</button>
+                            <button class="btn-secondary" onclick="resetFilters()">Reset</button>
                         </div>
 
-                        <!-- Queue List -->
-                        <div class="queue-list" id="queueContainer">
-                            <!-- Queue items will be populated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bulk Actions Page -->
-                <div class="page-view" id="bulk-actions-page">
-                    <h1>Bulk Actions</h1>
-                    
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Process Multiple Clearances</h2>
-                        </div>
-
-                        <div class="bulk-action-container">
-                            <div class="bulk-selection">
-                                <h3>Selected Items: <span id="selectedCount">0</span></h3>
-                                <div class="selected-list" id="selectedList"></div>
-                            </div>
-
-                            <div class="bulk-action-options">
-                                <div class="action-group">
-                                    <h3>Action</h3>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="bulkAction" value="approve"> Approve All</label>
-                                        <label><input type="radio" name="bulkAction" value="reject"> Reject All</label>
-                                        <label><input type="radio" name="bulkAction" value="comment"> Add Comment</label>
-                                        <label><input type="radio" name="bulkAction" value="follow-up"> Request Follow-up</label>
-                                    </div>
-                                </div>
-
-                                <div class="action-group" id="commentGroup" style="display: none;">
-                                    <h3>Comment</h3>
-                                    <textarea id="bulkComment" placeholder="Enter comment for all selected..."></textarea>
-                                </div>
-
-                                <div class="action-group">
-                                    <h3>Notes</h3>
-                                    <textarea id="bulkNotes" placeholder="Add internal notes..."></textarea>
-                                </div>
-
-                                <div class="action-buttons">
-                                    <button class="btn-primary" onclick="executeBulkAction()">Execute Action</button>
-                                    <button class="btn-secondary" onclick="clearSelection()">Clear Selection</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Follow-ups Page -->
-                <div class="page-view" id="follow-ups-page">
-                    <h1>Follow-up Requests</h1>
-                    
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Students Requiring Follow-up</h2>
-                        </div>
-
-                        <!-- Follow-up Filters -->
-                        <div class="filters-container">
-                            <div class="filter-group">
-                                <label>Search</label>
-                                <input type="text" id="followupSearch" placeholder="Student ID, Name..." onkeyup="filterFollowups()">
-                            </div>
-                            <div class="filter-group">
-                                <label>Status</label>
-                                <select id="followupStatusFilter" onchange="filterFollowups()">
-                                    <option value="">All Status</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="contacted">Contacted</option>
-                                    <option value="resolved">Resolved</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label>Priority</label>
-                                <select id="followupPriorityFilter" onchange="filterFollowups()">
-                                    <option value="">All Priorities</option>
-                                    <option value="urgent">Urgent</option>
-                                    <option value="high">High</option>
-                                    <option value="medium">Medium</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Follow-up Items -->
-                        <div class="followup-cards" id="followupContainer">
-                            <!-- Follow-up cards will be populated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Approved Items Page -->
-                <div class="page-view" id="approved-items-page">
-                    <h1>Approved Clearances</h1>
-                    
-                    <div class="section">
-                        <div class="filters-container">
-                            <div class="filter-group">
-                                <label>Search</label>
-                                <input type="text" id="approvedSearch" placeholder="Search approved items..." onkeyup="filterApproved()">
-                            </div>
-                            <div class="filter-group">
-                                <label>Date Range</label>
-                                <select id="approvedDateFilter" onchange="filterApproved()">
-                                    <option value="">All Dates</option>
-                                    <option value="today">Today</option>
-                                    <option value="week">This Week</option>
-                                    <option value="month">This Month</option>
-                                </select>
-                            </div>
-                            <button class="btn-secondary" onclick="exportApproved()">📥 Export CSV</button>
-                        </div>
-
+                        <!-- Queue Table -->
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Student ID</th>
                                     <th>Name</th>
                                     <th>Program</th>
-                                    <th>Approved Date</th>
-                                    <th>Notes</th>
+                                    <th>Year</th>
+                                    <th>College</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="approvedTableBody">
-                                <!-- Approved items will be populated here -->
+                            <tbody id="queueTableBody">
+                                <tr>
+                                    <td>2021-67890</td>
+                                    <td>Maria Santos</td>
+                                    <td>BSCS</td>
+                                    <td>2nd Year</td>
+                                    <td>CAS</td>
+                                    <td><span class="badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="btn-sm btn-success" onclick="approveStudent('2021-67890')">Approve</button>
+                                        <button class="btn-sm btn-warning" onclick="addComment('2021-67890')">Comment</button>
+                                        <button class="btn-sm btn-danger" onclick="rejectStudent('2021-67890')">Reject</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2021-12345</td>
+                                    <td>John Doe</td>
+                                    <td>BSIT</td>
+                                    <td>3rd Year</td>
+                                    <td>CAS</td>
+                                    <td><span class="badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="btn-sm btn-success" onclick="approveStudent('2021-12345')">Approve</button>
+                                        <button class="btn-sm btn-warning" onclick="addComment('2021-12345')">Comment</button>
+                                        <button class="btn-sm btn-danger" onclick="rejectStudent('2021-12345')">Reject</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2021-54321</td>
+                                    <td>Carol Egonio</td>
+                                    <td>BSIT</td>
+                                    <td>3rd Year</td>
+                                    <td>CAS</td>
+                                    <td><span class="badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="btn-sm btn-success" onclick="approveStudent('2021-54321')">Approve</button>
+                                        <button class="btn-sm btn-warning" onclick="addComment('2021-54321')">Comment</button>
+                                        <button class="btn-sm btn-danger" onclick="rejectStudent('2021-54321')">Reject</button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Officer Profile Settings -->
-                <div class="page-view" id="profile-settings-page">
-                    <h1>Officer Profile Settings</h1>
-                    
+                <!-- Follow-ups Page -->
+                <div class="page-view" id="follow-ups-page">
+                    <h1>Follow-up Requests</h1>
+                    <p class="page-subtitle">Students requiring follow-up actions</p>
+
                     <div class="section">
-                        <div class="section-header">
-                            <h2>Personal Information</h2>
+                        <!-- Filter -->
+                        <div class="filters-bar">
+                            <div class="filter-group">
+                                <label>Search</label>
+                                <input type="text" id="followupSearch" placeholder="Student ID or Name..." onkeyup="filterFollowups()">
+                            </div>
+                            <div class="filter-group">
+                                <label>Status</label>
+                                <select id="followupStatus" onchange="filterFollowups()">
+                                    <option value="">All</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="contacted">Contacted</option>
+                                    <option value="resolved">Resolved</option>
+                                </select>
+                            </div>
                         </div>
-                        <form id="officerProfileForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Full Name</label>
-                                    <input type="text" value="Officer Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Position</label>
-                                    <input type="text" value="Treasurer" required>
+
+                        <!-- Follow-up List -->
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Reason</th>
+                                    <th>Date Requested</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="followupTableBody">
+                                <tr>
+                                    <td>2021-12345</td>
+                                    <td>John Doe</td>
+                                    <td>Outstanding balance: ₱200</td>
+                                    <td>Dec 10, 2025</td>
+                                    <td><span class="badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="btn-sm btn-success" onclick="resolveFollowup('2021-12345')">Resolved</button>
+                                        <button class="btn-sm btn-warning" onclick="addComment('2021-12345')">Comment</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Audit Logs Page -->
+                <div class="page-view" id="audit-logs-page">
+                    <h1>Audit Logs</h1>
+                    <p class="page-subtitle">Record of all actions and system events</p>
+
+                    <div class="section">
+                        <!-- Filter -->
+                        <div class="filters-bar">
+                            <div class="filter-group">
+                                <label>Search</label>
+                                <input type="text" id="auditSearch" placeholder="Search logs..." onkeyup="filterAuditLogs()">
+                            </div>
+                            <div class="filter-group">
+                                <label>Action Type</label>
+                                <select id="actionType" onchange="filterAuditLogs()">
+                                    <option value="">All Actions</option>
+                                    <option value="approve">Approvals</option>
+                                    <option value="reject">Rejections</option>
+                                    <option value="comment">Comments</option>
+                                    <option value="follow-up">Follow-ups</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Date</label>
+                                <select id="dateRange" onchange="filterAuditLogs()">
+                                    <option value="">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Audit Log Table -->
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Officer</th>
+                                    <th>Action</th>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTableBody">
+                                <tr>
+                                    <td>Dec 11, 2025 - 2:35 PM</td>
+                                    <td>Officer 1</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>2021-67890</td>
+                                    <td>Maria Santos</td>
+                                    <td>All fees paid in full</td>
+                                </tr>
+                                <tr>
+                                    <td>Dec 11, 2025 - 2:20 PM</td>
+                                    <td>Officer 1</td>
+                                    <td><span class="badge pending">Follow-up</span></td>
+                                    <td>2021-12345</td>
+                                    <td>John Doe</td>
+                                    <td>Payment incomplete - ₱200 remaining</td>
+                                </tr>
+                                <tr>
+                                    <td>Dec 11, 2025 - 1:45 PM</td>
+                                    <td>Officer 1</td>
+                                    <td><span class="badge rejected">Rejected</span></td>
+                                    <td>2021-99999</td>
+                                    <td>Peter Cruz</td>
+                                    <td>Outstanding balance of ₱1,500</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Profile Settings Page -->
+                <div class="section">
+                        <div class="section-header">
+                            <h2>Profile Settings</h2>
+                        </div>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label>Profile Picture</label>
+                                <div style="display:flex;gap:12px;align-items:center;">
+                                    <img id="profilePreview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23777' font-size='12'>No Image</text></svg>" alt="Profile" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:1px solid #ddd;">
+                                    <input type="file" id="profilePicture" accept="image/*">
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" value="officer@lnu.edu.ph" required>
+                            <div class="form-group">
+                                <label>Digital Signature</label>
+                                <div style="display:flex;gap:12px;align-items:center;">
+                                    <img id="signaturePreview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='80'><rect width='100%' height='100%' fill='%23f8f9fa'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='12'>No Signature</text></svg>" alt="Signature" style="width:180px;height:80px;border-radius:6px;object-fit:contain;border:1px solid #ddd;background:#fff;padding:6px;">
+                                    <input type="file" id="profileSignature" accept="image/*">
                                 </div>
-                                <div class="form-group">
-                                    <label>Phone</label>
-                                    <input type="tel" value="+63 912 345 6789">
-                                </div>
+                                <small style="color:#666;display:block;margin-top:6px;">Upload a scanned signature (PNG/SVG preferred) to be used on clearance documents.</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="profileName" value="Approver User" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="profileEmail" value="approver@lnu.edu.ph" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Contact Number</label>
+                                <input type="tel" id="profileContact" value="+63 912 345 6789">
+                            </div>
+                            <div class="form-group">
+                                <label>Office</label>
+                                <input type="text" id="profileOffice" value="Admin Office">
                             </div>
                             <button type="submit" class="btn-primary">Update Profile</button>
                         </form>
                     </div>
 
-                    <div class="section" style="margin-top: 25px;">
-                        <div class="section-header">
-                            <h2>Notification Preferences</h2>
-                        </div>
+                    <div class="section">
+                        <h2>Notification Preferences</h2>
                         <form>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" checked> Email notifications for new queue items</label>
-                                <label><input type="checkbox" checked> Browser notifications</label>
-                                <label><input type="checkbox"> Daily summary report</label>
-                                <label><input type="checkbox" checked> Follow-up reminders</label>
-                            </div>
+                            <label class="checkbox">
+                                <input type="checkbox" checked> Email notifications for new queue items
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" checked> Browser notifications
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox"> Daily summary report
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" checked> Follow-up reminders
+                            </label>
                             <button type="submit" class="btn-primary">Save Preferences</button>
                         </form>
                     </div>
@@ -491,38 +402,136 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Add Comment</h2>
-                <button class="close-modal" onclick="closeModal('commentModal')">&times;</button>
+                <button class="close-btn" onclick="closeModal('commentModal')">&times;</button>
             </div>
-            <form id="commentForm">
-                <div class="form-group">
-                    <label>Student</label>
-                    <input type="text" id="commentStudentName" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Comment</label>
-                    <textarea id="commentText" placeholder="Enter your comment..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label><input type="checkbox" id="commentNotify"> Notify student</label>
-                </div>
-                <button type="submit" class="btn-primary">Post Comment</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Queue Item Detail Modal -->
-    <div class="modal" id="queueItemModal">
-        <div class="modal-content modal-lg">
-            <div class="modal-header">
-                <h2>Queue Item Details</h2>
-                <button class="close-modal" onclick="closeModal('queueItemModal')">&times;</button>
+            <div class="form-group">
+                <label>Student ID</label>
+                <input type="text" id="modalStudentId" readonly>
             </div>
-            <div id="queueItemDetail">
-                <!-- Details will be populated here -->
+            <div class="form-group">
+                <label>Your Comment *</label>
+                <textarea id="commentText" placeholder="Enter your comment or notes..." required></textarea>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="submitComment()">Post Comment</button>
+                <button class="btn-secondary" onclick="closeModal('commentModal')">Cancel</button>
             </div>
         </div>
     </div>
 
-    <script src="officer-script.js"></script>
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active from nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Filter Queue
+        function filterQueue() {
+            const search = document.getElementById('queueSearch').value.toLowerCase();
+            const program = document.getElementById('programFilter').value;
+            const year = document.getElementById('yearFilter').value;
+            
+            // Filter logic here
+            console.log('Filtering with:', { search, program, year });
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            document.getElementById('queueSearch').value = '';
+            document.getElementById('programFilter').value = '';
+            document.getElementById('yearFilter').value = '';
+            filterQueue();
+        }
+
+        // Approve Student
+        function approveStudent(studentId) {
+            if (confirm('Approve clearance for ' + studentId + '?')) {
+                console.log('Approved:', studentId);
+                logAction(studentId, 'Approved', 'Clearance approved');
+                alert('Clearance approved successfully!');
+            }
+        }
+
+        // Reject Student
+        function rejectStudent(studentId) {
+            openCommentModal(studentId, 'reject');
+        }
+
+        // Add Comment
+        function addComment(studentId) {
+            openCommentModal(studentId, 'comment');
+        }
+
+        // Open Comment Modal
+        function openCommentModal(studentId, action) {
+            document.getElementById('modalStudentId').value = studentId;
+            document.getElementById('commentModal').classList.add('active');
+        }
+
+        // Close Modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Submit Comment
+        function submitComment() {
+            const studentId = document.getElementById('modalStudentId').value;
+            const comment = document.getElementById('commentText').value;
+            
+            if (!comment.trim()) {
+                alert('Please enter a comment');
+                return;
+            }
+            
+            logAction(studentId, 'Comment', comment);
+            closeModal('commentModal');
+            document.getElementById('commentText').value = '';
+            alert('Comment added successfully!');
+        }
+
+        // Filter Follow-ups
+        function filterFollowups() {
+            const search = document.getElementById('followupSearch').value.toLowerCase();
+            const status = document.getElementById('followupStatus').value;
+            
+            console.log('Filtering follow-ups with:', { search, status });
+        }
+
+        // Resolve Follow-up
+        function resolveFollowup(studentId) {
+            if (confirm('Mark follow-up as resolved for ' + studentId + '?')) {
+                logAction(studentId, 'Follow-up Resolved', 'Marked as resolved');
+                alert('Follow-up resolved!');
+            }
+        }
+
+        // Filter Audit Logs
+        function filterAuditLogs() {
+            const search = document.getElementById('auditSearch').value.toLowerCase();
+            const actionType = document.getElementById('actionType').value;
+            const dateRange = document.getElementById('dateRange').value;
+            
+            console.log('Filtering audit logs with:', { search, actionType, dateRange });
+        }
+
+        // Log Action - Records to audit log
+        function logAction(studentId, action, comment) {
+            const timestamp = new Date().toLocaleString();
+            console.log(`[${timestamp}] Action: ${action} | Student: ${studentId} | Comment: ${comment}`);
+            
+            // In a real app, this would send data to server
+        }
+    </script>
 </body>
 </html>
