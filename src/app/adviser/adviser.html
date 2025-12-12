@@ -1,0 +1,84 @@
+<div class="profile-page">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-left">
+      <h2>Dashboard</h2>
+      <ul class="menu-list">
+          <li (click)="goTo('profile')"><span>Profile</span></li>
+          <li  (click)="goTo('digits-treasurer')"><span>Digits Treasurer</span></li>
+          <li class="active"><span>Adviser</span></li>
+          <li><span>Library</span></li>
+          <li><span>Year Level Officer</span></li>
+          <li><span>VPSD</span></li>
+          <li class="logout-item" (click)="logout()">
+              <span class="logout-text">🔓 Logout</span>
+          </li>
+      </ul>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+      <!-- Square Card -->
+      <div class="square">
+          <div class="square-image">
+              <img src="assets/picture.jpg" alt="ID Picture">
+          </div>
+          <div class="square-content">
+              <p>S.Y. 2025-2026 - 1st Semester</p>
+              <hr>
+              <h1>Welcome Adviser!</h1>
+              <p class="small-text">Select an option from the sidebar to manage student clearances</p>
+          </div>
+      </div>
+
+      <!-- Adviser Info -->
+      <div class="profile-details">
+          <h2>Adviser Info</h2>
+          <div class="profile-info">
+              <div class="upper-details">
+                  <div class="column">
+                      <p><strong>Name:</strong> <input type="text" placeholder="Suzuka Nakamoto"></p>
+                      <p><strong>Email:</strong> <input type="email" placeholder="NakamotoFox@gmail.com"></p>
+                  </div>
+                  <div class="column">
+                      <p><strong>Contact Number:</strong> <input type="tel" placeholder="12356789"></p>
+                      <p><strong>Office:</strong> <input type="text" placeholder="Araneta Coliseum"></p>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Adviser Clearance & Grounds of Withholdment -->
+<div class="status-details">
+    <h2>Clearance Status</h2>
+
+    <!-- Single Adviser Clearance Row -->
+    <div class="status-info">
+        <div class="status-row adviser-clearance">
+            <span>Adviser Clearance</span>
+            <span class="status not-cleared">❌ Not Cleared</span>
+        </div>
+    </div>
+
+    <!-- Grounds of Withholdment Table -->
+    <div class="withhold-box">
+        <h3>Grounds of Withholdment</h3>
+        <table class="withhold-table">
+            <tr>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Missing Clearance Form</td>
+                <td class="status not-cleared">❌ Not Cleared</td>
+            </tr>
+            <tr>
+                <td>Broken Equipments</td>
+                <td class="status cleared">✅ Cleared</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+

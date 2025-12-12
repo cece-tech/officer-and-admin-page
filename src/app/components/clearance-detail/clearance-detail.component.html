@@ -1,0 +1,241 @@
+<div class="clearance-detail-container">
+  <div class="header">
+    <button (click)="goBack()" class="btn-back">← Back</button>
+    <h2>Clearance Details</h2>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading clearance details...</p>
+  </div>
+
+  <div *ngIf="!isLoading && clearance" class="detail-content">
+    <!-- Header Card -->
+    <div class="header-card">
+      <div class="student-section">
+        <h3>{{ clearance.student_name }}</h3>
+        <p class="student-id">Student ID: {{ clearance.student_id }}</p>
+        <p class="section">Section: {{ clearance.section }}</p>
+      </div>
+
+      <div class="status-section">
+        <span [class]="'status-badge status-' + clearance.status.toLowerCase()"
+          [style.color]="getStatusColor(clearance.status)">
+          {{ clearance.status }}
+        </span>
+        <p class="submitted-date">Submitted: {{ clearance.created_at | date:'short' }}</p>
+      </div>
+
+      <div class="action-section">
+        <button
+          (click)="openApprovalModal()"
+          class="btn-primary"
+          [disabled]="clearance.status === 'COMPLETED' || clearance.status === 'REJECTED'"
+        >
+          Review & Decide
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button
+        [class.active]="activeTab === 'overview'"
+        (click)="selectTab('overview')"
+        class="tab-button"
+      >
+        Overview
+      </button>
+      <button
+        [class.active]="activeTab === 'approvers'"
+        (click)="selectTab('approvers')"
+        class="tab-button"
+      >
+        Approvers
+      </button>
+      <button
+        [class.active]="activeTab === 'documents'"
+        (click)="selectTab('documents')"
+        class="tab-button"
+      >
+        Documents
+      </button>
+      <button
+        [class.active]="activeTab === 'timeline'"
+        (click)="selectTab('timeline')"
+        class="tab-button"
+      >
+        Timeline
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Overview Tab -->
+      <div *ngIf="activeTab === 'overview'" class="tab-pane">
+        <h4>Clearance Information</h4>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Student Name:</label>
+            <span>{{ clearance.student_name }}</span>
+          </div>
+          <div class="info-item">
+            <label>Student ID:</label>
+            <span>{{ clearance.student_id }}</span>
+          </div>
+          <div class="info-item">
+            <label>Section:</label>
+            <span>{{ clearance.section }}</span>
+          </div>
+          <div class="info-item">
+            <label>Request Type:</label>
+            <span>{{ clearance.request_type || 'Standard' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Status:</label>
+            <span [style.color]="getStatusColor(clearance.status)">{{ clearance.status }}</span>
+          </div>
+          <div class="info-item">
+            <label>Submitted:</label>
+            <span>{{ clearance.created_at | date:'long' }}</span>
+          </div>
+          <div class="info-item" *ngIf="clearance.notes">
+            <label>Notes:</label>
+            <span>{{ clearance.notes }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approvers Tab -->
+      <div *ngIf="activeTab === 'approvers'" class="tab-pane">
+        <h4>Required Approvals</h4>
+
+        <div *ngIf="approvers && approvers.length > 0" class="approvers-list">
+          <div *ngFor="let approver of approvers" class="approver-card">
+            <div class="approver-header">
+              <h5>{{ approver.officer_name || 'Officer' }}</h5>
+              <span [class]="'status-badge status-' + approver.status.toLowerCase()">
+                {{ approver.status }}
+              </span>
+            </div>
+
+            <div class="approver-details">
+              <p><strong>Department:</strong> {{ approver.department_name }}</p>
+              <p><strong>Requirement:</strong> {{ approver.requirement_name }}</p>
+
+              <div *ngIf="approver.comments" class="comments">
+                <p><strong>Comments:</strong></p>
+                <p class="comment-text">{{ approver.comments }}</p>
+              </div>
+
+              <div *ngIf="approver.approved_at" class="approval-date">
+                <p><strong>Approved:</strong> {{ approver.approved_at | date:'short' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!approvers || approvers.length === 0" class="empty-state">
+          <p>No approvers assigned yet</p>
+        </div>
+      </div>
+
+      <!-- Documents Tab -->
+      <div *ngIf="activeTab === 'documents'" class="tab-pane">
+        <h4>Supporting Documents</h4>
+
+        <div *ngIf="documents && documents.length > 0" class="documents-list">
+          <div *ngFor="let doc of documents" class="document-item">
+            <div class="doc-info">
+              <span class="doc-icon">📄</span>
+              <div>
+                <p class="doc-name">{{ doc.name }}</p>
+                <p class="doc-meta">{{ doc.size }} • {{ doc.uploaded_at | date:'short' }}</p>
+              </div>
+            </div>
+            <button
+              (click)="downloadDocument(doc.id, doc.name)"
+              class="btn-small"
+            >
+              📥 Download
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="!documents || documents.length === 0" class="empty-state">
+          <p>No documents uploaded</p>
+        </div>
+      </div>
+
+      <!-- Timeline Tab -->
+      <div *ngIf="activeTab === 'timeline'" class="tab-pane">
+        <h4>Process Timeline</h4>
+
+        <div *ngIf="timeline && timeline.length > 0" class="timeline">
+          <div *ngFor="let event of timeline" class="timeline-item">
+            <div class="timeline-marker">
+              <span class="timeline-icon">{{ getTimelineIcon(event.action) }}</span>
+            </div>
+            <div class="timeline-content">
+              <h5>{{ event.action }}</h5>
+              <p class="timeline-time">{{ event.created_at | date:'short' }}</p>
+              <p *ngIf="event.description" class="timeline-description">
+                {{ event.description }}
+              </p>
+              <p *ngIf="event.user_name" class="timeline-user">
+                by {{ event.user_name }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!timeline || timeline.length === 0" class="empty-state">
+          <p>No timeline events yet</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval Modal -->
+  <div *ngIf="showApprovalModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Make Decision on Clearance</h3>
+        <button (click)="closeApprovalModal()" class="btn-close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-subtitle">{{ clearance.student_name }} - {{ clearance.section }}</p>
+
+        <form [formGroup]="approvalForm">
+          <div class="form-group">
+            <label>Decision:</label>
+            <select formControlName="status" class="form-control">
+              <option value="APPROVED">✓ Approve</option>
+              <option value="REJECTED">✗ Reject</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Comments/Reason:</label>
+            <textarea
+              formControlName="comments"
+              class="form-control"
+              rows="4"
+              [placeholder]="approvalForm.get('status')?.value === 'REJECTED'
+                ? 'Provide detailed reason for rejection...'
+                : 'Add any comments (optional)...'"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button (click)="closeApprovalModal()" class="btn-secondary">Cancel</button>
+        <button (click)="submitApproval()" class="btn-primary" [disabled]="isLoading">
+          {{ isLoading ? 'Processing...' : 'Submit Decision' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

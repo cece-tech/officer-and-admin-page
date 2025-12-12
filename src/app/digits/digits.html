@@ -1,0 +1,120 @@
+<div class="profile-page">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-left">
+      <h2>Dashboard</h2>
+      <ul class="menu-list">
+          <li (click)="goTo('profile')"><span>Profile</span></li>
+          <li class="active"><span>Digits Treasurer</span></li>
+          <li (click)="goTo('adviser')"><span>Adviser</span></li>
+          <li><span>Library</span></li>
+          <li><span>Year Level Officer</span></li>
+          <li><span>VPSD</span></li>
+           <li class="logout-item" (click)="logout()">
+        <span class="logout-text">🔓 Logout</span>
+        </li>
+      </ul>
+  </div>
+
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+      <!-- Main Square Card -->
+      <div class="square">
+          <div class="square-image">
+              <img src="assets/picture.jpg" alt="ID Picture">
+          </div>
+          <div class="square-content">
+              <p>S.Y. 2025-2026 - 1st Semester</p>
+              <hr>
+              <h1>Digits Treasurer Clearance</h1>
+              <p class="small-text">Please check your current status and payment history below.</p>
+          </div>
+      </div>
+
+      <!-- Treasurer Info Box -->
+      <div class="profile-details">
+          <h2>Treasurer Information</h2>
+
+          <div class="upper-details">
+              <div class="column">
+                  <label><strong>Name:</strong></label>
+                  <input type="text" value="Mr. John Dela Cruz" disabled>
+              </div>
+              <div class="column">
+                  <label><strong>Email:</strong></label>
+                  <input type="email" value="treasurer@school.edu" disabled>
+              </div>
+          </div>
+
+          <div class="upper-details">
+              <div class="column">
+                  <label><strong>Contact Number:</strong></label>
+                  <input type="text" value="09123456789" disabled>
+              </div>
+              <div class="column">
+                  <label><strong>Office:</strong></label>
+                  <input type="text" value="Digits Treasurer Office - Building A" disabled>
+              </div>
+          </div>
+      </div>
+
+      <!-- Treasurer Clearance Status (moved above table) -->
+      <div class="profile-details">
+          <h2>Digits Treasurer Status</h2>
+          <div class="status-info">
+              <div class="status-row">
+                <span>Outstanding Balance</span>
+                <span class="status not-cleared">❌ Unpaid</span>
+              </div>
+              <div class="status-row">
+                <span>Form Submission</span>
+                <span class="status cleared">✅ Complete</span>
+              </div>
+          </div>
+      </div>
+
+      <!-- Payment History Table (at the bottom) -->
+      <div class="table-container">
+          <h2>Payment History</h2>
+          <table class="payment-table">
+              <thead>
+                  <tr>
+                      <th>Date</th>
+                      <th>Amount</th>
+                      <th>Remarks</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>2025-01-20</td>
+                      <td>₱500</td>
+                      <td>Library Fee</td>
+                      <td class="status cleared">✅ Paid</td>
+                  </tr>
+                  <tr>
+                      <td>2025-01-18</td>
+                      <td>₱1,200</td>
+                      <td>Tuition Partial</td>
+                      <td class="status not-cleared">❌ Unpaid</td>
+                  </tr>
+                  <tr>
+                      <td>2025-01-10</td>
+                      <td>₱300</td>
+                      <td>ID Replacement</td>
+                      <td class="status cleared">✅ Paid</td>
+                  </tr>
+              </tbody>
+              <tfoot>
+                  <tr>
+                      <td colspan="3" style="text-align:right; font-weight:bold;">Total Amount:</td>
+                      <td style="font-weight:bold;">₱1,200</td>
+                  </tr>
+              </tfoot>
+          </table>
+      </div>
+
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="profile.css">
+
+<div class="profile-page">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-left">
+      <h2>Dashboard</h2>
+      <ul class="menu-list">
+          <li class="active"><span>Profile</span></li>
+          <li (click)="goTo('digits-treasurer')"><span>Digits Treasurer</span></li>
+          <li (click)="goTo('adviser')"><span>Adviser</span></li>
+          <li><span>Library</span></li>
+          <li><span>Year Level Officer</span></li>
+          <li><span>VPSD</span></li>
+           <li class="logout-item" (click)="logout()">
+        <span class="logout-text">🔓 Logout</span>
+        </li>
+      </ul>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+
+      <!-- Square Card -->
+      <div class="square">
+          <div class="square-image">
+              <img src="assets/picture.jpg" alt="ID Picture">
+          </div>
+          <div class="square-content">
+              <p>S.Y. 2025-2026 - 1st Semester</p>
+              <hr>
+              <h1>Welcome User!</h1>
+              <p class="small-text">Select an option from the sidebar to continue your clearance</p>
+          </div>
+      </div>
+
+      <!-- Profile Details -->
+      <div class="profile-details">
+          <h2>Profile Details</h2>
+          <div class="profile-info">
+
+              <div class="upper-details">
+                  <div class="column">
+                      <p><strong>Name:</strong> <input type="text" placeholder="Enter your name"></p>
+                      <p><strong>Student ID:</strong> <input type="text" placeholder="Enter your student ID"></p>
+                  </div>
+                  <div class="column">
+                      <p><strong>Email:</strong> <input type="email" placeholder="Enter your email"></p>
+                      <p><strong>Contact Number:</strong> <input type="tel" placeholder="Enter your contact number"></p>
+                  </div>
+              </div>
+
+              <div class="lower-details">
+                  <div class="detail-box clearance-status">
+                      <span>Not Cleared</span>
+                  </div>
+                  <div class="detail-box">
+                      <input type="text" placeholder="Enter your Program">
+                  </div>
+              </div>
+
+          </div>
+      </div>
+
+      <!-- Status Details -->
+      <div class="status-details">
+          <h2>Clearance Status</h2>
+          <div class="status-info">
+              <div class="status-row"><span>Digits Treasurer</span><span class="status not-cleared">❌ Not Cleared</span></div>
+              <div class="status-row"><span>Adviser</span><span class="status cleared">✅ Cleared</span></div>
+              <div class="status-row"><span>Library</span><span class="status not-cleared">❌ Not Cleared</span></div>
+              <div class="status-row"><span>Year Level Officer</span><span class="status cleared">✅ Cleared</span></div>
+              <div class="status-row"><span>VPSD</span><span class="status not-cleared">❌ Not Cleared</span></div>
+          </div>
+      </div>
+
+      <!-- Clearance Form Section -->
+      <div class="clearance-form-box">
+         <p class="clearance-desc">Click the button to download your clearance form</p>
+         <button class="clearance-btn" (click)="downloadClearanceForm()">Clearance Form</button>
+      </div>
+
+  </div>
+</div>

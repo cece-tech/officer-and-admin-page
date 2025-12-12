@@ -1,0 +1,193 @@
+<div class="ssc-dashboard-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>Student Support Center - Admin Dashboard</h2>
+    </div>
+    <div class="navbar-menu">
+      <span class="user-name">{{ currentUser?.full_name }} ({{ currentUser?.role }})</span>
+      <button (click)="onLogout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <div class="ssc-content">
+    <div class="top-tabs">
+      <button
+        *ngFor="let section of sections"
+        [class.active]="activeSection === section"
+        (click)="selectSection(section)"
+        class="tab-button"
+      >
+        {{ section }}
+      </button>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Summary Cards -->
+      <div class="summary-section">
+        <h3>Course Summary - {{ activeSection }}</h3>
+        <div class="summary-cards" *ngIf="courseSummary">
+          <div class="summary-card">
+            <h4>Total Students</h4>
+            <p class="number">{{ courseSummary.total_students }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Submitted</h4>
+            <p class="number">{{ courseSummary.submitted }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Pending</h4>
+            <p class="number">{{ courseSummary.pending }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>In Progress</h4>
+            <p class="number">{{ courseSummary.in_progress }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Approved</h4>
+            <p class="number success">{{ courseSummary.approved }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Rejected</h4>
+            <p class="number error">{{ courseSummary.rejected }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Completed</h4>
+            <p class="number">{{ courseSummary.completed }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="actions-section">
+        <h3>Quick Actions</h3>
+        <button (click)="loadCourseStudents()" class="action-btn">View All Students</button>
+        <button (click)="loadPendingReview()" class="action-btn">Pending Review</button>
+        <button (click)="loadNonSubmitters()" class="action-btn">Non-Submitters</button>
+        <button (click)="loadCompletedList()" class="action-btn">Completed</button>
+        <button (click)="sendRemindersConfirm()" class="action-btn danger">Send Reminders</button>
+        <button (click)="downloadReport()" class="action-btn">Download Report</button>
+      </div>
+    </div>
+
+    <!-- Data Tables -->
+    <div class="data-section">
+      <!-- All Students Table -->
+      <div *ngIf="viewMode === 'students'" class="table-container">
+        <h4>All Students in {{ activeSection }}</h4>
+        <table *ngIf="courseStudents?.students && courseStudents.students.length > 0">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Pending</th>
+              <th>Submitted</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of courseStudents.students">
+              <td>{{ student.student_number }}</td>
+              <td>{{ student.name }}</td>
+              <td>{{ student.email }}</td>
+              <td>
+                <span [class]="'status-badge status-' + student.clearance_status.toLowerCase()">
+                  {{ student.clearance_status }}
+                </span>
+              </td>
+              <td>{{ student.pending_approvals }}</td>
+              <td>{{ student.submitted_at | date:'short' }}</td>
+              <td>
+                <button (click)="viewStudentClearance(student.clearance_id)" class="btn-small">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!courseStudents?.students || courseStudents.students.length === 0">No students found.</p>
+      </div>
+
+      <!-- Pending Review Table -->
+      <div *ngIf="viewMode === 'pending'" class="table-container">
+        <h4>Pending Review - {{ activeSection }}</h4>
+        <div *ngIf="pendingReview?.clearances && pendingReview.clearances.length > 0" class="clearances-list">
+          <div *ngFor="let clearance of pendingReview.clearances" class="clearance-item">
+            <div class="item-header">
+              <h5>{{ clearance.student_name }} - {{ clearance.student_id }}</h5>
+              <span class="status-badge status-pending">PENDING</span>
+            </div>
+            <div class="item-body">
+              <p><strong>Submitted:</strong> {{ clearance.submitted_at | date:'short' }}</p>
+              <div class="approvals">
+                <p><strong>Pending Approvals:</strong></p>
+                <ul>
+                  <li *ngFor="let approval of clearance.pending_approvals">
+                    <strong>{{ approval.department }}</strong> - {{ approval.requirement }}
+                    <button (click)="approveItem(approval.approver_id)" class="btn-approve">Approve</button>
+                    <button (click)="openRejectModal(approval.approver_id)" class="btn-reject">Reject</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="!pendingReview?.clearances || pendingReview.clearances.length === 0">No pending approvals.</p>
+      </div>
+
+      <!-- Non-Submitters Table -->
+      <div *ngIf="viewMode === 'non-submitters'" class="table-container">
+        <h4>Non-Submitters - {{ activeSection }}</h4>
+        <table *ngIf="nonSubmitters?.students && nonSubmitters.students.length > 0">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of nonSubmitters.students">
+              <td>{{ student.student_id }}</td>
+              <td>{{ student.full_name }}</td>
+              <td>{{ student.email }}</td>
+              <td>
+                <button (click)="sendReminderSingle(student.id)" class="btn-small">Send Reminder</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!nonSubmitters?.students || nonSubmitters.students.length === 0">All students have submitted.</p>
+      </div>
+
+      <!-- Completed Table -->
+      <div *ngIf="viewMode === 'completed'" class="table-container">
+        <h4>Completed Clearances - {{ activeSection }}</h4>
+        <table *ngIf="completedList?.clearances && completedList.clearances.length > 0">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Completed</th>
+              <th>Certificate</th>
+              <th>Downloaded</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let clearance of completedList.clearances">
+              <td>{{ clearance.student_id }}</td>
+              <td>{{ clearance.student_name }}</td>
+              <td>{{ clearance.completed_at | date:'short' }}</td>
+              <td>{{ clearance.certificate_generated ? 'Yes' : 'No' }}</td>
+              <td>
+                <span *ngIf="clearance.certificate_downloaded" class="success">✓ Downloaded</span>
+                <span *ngIf="!clearance.certificate_downloaded" class="warning">Pending</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!completedList?.clearances || completedList.clearances.length === 0">No completed clearances.</p>
+      </div>
+    </div>
+  </div>
+</div>

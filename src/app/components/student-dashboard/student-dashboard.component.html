@@ -1,0 +1,204 @@
+<div class="dashboard-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>Student Clearance Portal</h2>
+    </div>
+    <div class="navbar-menu">
+      <span class="user-name">{{ currentUser?.full_name }}</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-content">
+    <div class="sidebar">
+      <ul class="menu">
+        <li [class.active]="activeTab === 'overview'">
+          <a (click)="selectTab('overview')">Overview</a>
+        </li>
+        <li [class.active]="activeTab === 'pending'">
+          <a (click)="selectTab('pending')">Pending Approvals</a>
+        </li>
+        <li [class.active]="activeTab === 'completed'">
+          <a (click)="selectTab('completed')">Completed</a>
+        </li>
+        <li [class.active]="activeTab === 'rejected'">
+          <a (click)="selectTab('rejected')">Rejected</a>
+        </li>
+        <li [class.active]="activeTab === 'notifications'">
+          <a (click)="selectTab('notifications')">Notifications</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <!-- Overview Tab -->
+      <div *ngIf="activeTab === 'overview'" class="tab-content">
+        <h3>Clearance Overview</h3>
+        <div class="stats-grid" *ngIf="overview">
+          <div class="stat-card">
+            <h4>Total Clearances</h4>
+            <p class="stat-number">{{ overview.statistics.total_clearances }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Pending</h4>
+            <p class="stat-number pending">{{ overview.statistics.pending }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>In Progress</h4>
+            <p class="stat-number progress">{{ overview.statistics.in_progress }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Approved</h4>
+            <p class="stat-number approved">{{ overview.statistics.approved }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Rejected</h4>
+            <p class="stat-number rejected">{{ overview.statistics.rejected }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Completed</h4>
+            <p class="stat-number completed">{{ overview.statistics.completed }}</p>
+          </div>
+        </div>
+
+        <div class="clearances-list">
+          <h4>Your Clearances</h4>
+          <table *ngIf="overview?.clearances && overview.clearances.length > 0">
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Completion %</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let clearance of clearances">
+                <td>{{ clearance.section }}</td>
+                <td>
+                  <span [class]="'status-badge status-' + clearance.status.toLowerCase()">
+                    {{ clearance.status }}
+                  </span>
+                </td>
+                <td>{{ clearance.created_at | date:'short' }}</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width]="overview.completionRate + '%'"></div>
+                  </div>
+                  {{ overview.completionRate }}%
+                </td>
+                <td>
+                  <button (click)="downloadCertificate(clearance.id)" class="btn-small">View</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p *ngIf="!clearances || clearances.length === 0">No clearances yet.</p>
+        </div>
+      </div>
+
+      <!-- Pending Approvals Tab -->
+      <div *ngIf="activeTab === 'pending'" class="tab-content">
+        <h3>Pending Approvals</h3>
+        <div *ngIf="pendingApprovals && pendingApprovals.length > 0" class="approvals-list">
+          <div *ngFor="let item of pendingApprovals" class="approval-card">
+            <div class="card-header">
+              <h4>{{ item.section }}</h4>
+              <span class="status-badge status-{{ item.status.toLowerCase() }}">{{ item.status }}</span>
+            </div>
+            <div class="card-body">
+              <p><strong>Submitted:</strong> {{ item.submitted_at | date:'short' }}</p>
+              <p><strong>Pending Approvals:</strong> {{ item.pending_approvals.length }}</p>
+
+              <div class="approvers-list">
+                <h5>Required Approvals:</h5>
+                <ul>
+                  <li *ngFor="let approval of item.pending_approvals">
+                    <div class="approval-item">
+                      <span class="officer-name">{{ approval.officer_name }}</span>
+                      <span class="requirement">{{ approval.requirement }}</span>
+                      <span [class]="'approval-status status-' + approval.status.toLowerCase()">
+                        {{ approval.status }}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="!pendingApprovals || pendingApprovals.length === 0">
+          No pending approvals.
+        </p>
+      </div>
+
+      <!-- Completed Tab -->
+      <div *ngIf="activeTab === 'completed'" class="tab-content">
+        <h3>Completed Clearances</h3>
+        <div *ngIf="completedClearances && completedClearances.length > 0" class="clearances-grid">
+          <div *ngFor="let clearance of completedClearances" class="clearance-card">
+            <h4>{{ clearance.section }}</h4>
+            <p><strong>Completed:</strong> {{ clearance.updated_at | date:'short' }}</p>
+            <p class="success">Clearance Approved ✓</p>
+            <button
+              (click)="downloadCertificate(clearance.id)"
+              class="btn-primary"
+            >
+              Download Certificate
+            </button>
+          </div>
+        </div>
+        <p *ngIf="!completedClearances || completedClearances.length === 0">
+          No completed clearances yet.
+        </p>
+      </div>
+
+      <!-- Rejected Tab -->
+      <div *ngIf="activeTab === 'rejected'" class="tab-content">
+        <h3>Rejected Clearances (Action Required)</h3>
+        <div *ngIf="rejectedClearances && rejectedClearances.length > 0" class="rejected-list">
+          <div *ngFor="let clearance of rejectedClearances" class="rejected-card">
+            <div class="card-header alert">
+              <h4>{{ clearance.section }}</h4>
+              <span class="status-badge status-rejected">REJECTED</span>
+            </div>
+            <div class="card-body">
+              <p><strong>Submitted:</strong> {{ clearance.created_at | date:'short' }}</p>
+              <p class="action-required">Your clearance requires resubmission.</p>
+
+              <h5>Review Required</h5>
+              <p>Please address the feedback and resubmit your clearance.</p>
+
+              <button (click)="resubmitRequest(clearance.id)" class="btn-primary">
+                Resubmit Clearance
+              </button>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="!rejectedClearances || rejectedClearances.length === 0">
+          No rejected clearances.
+        </p>
+      </div>
+
+      <!-- Notifications Tab -->
+      <div *ngIf="activeTab === 'notifications'" class="tab-content">
+        <h3>Notifications</h3>
+        <div *ngIf="notifications && notifications.length > 0" class="notifications-list">
+          <div *ngFor="let notif of notifications" [class.unread]="!notif.read_at" class="notification-item">
+            <div class="notif-header">
+              <h5>{{ notif.title || 'Notification' }}</h5>
+              <span class="notif-type">{{ notif.type || 'System' }}</span>
+            </div>
+            <p>{{ notif.message }}</p>
+            <p class="notif-time">{{ notif.created_at | date:'short' }}</p>
+            <button *ngIf="!notif.read_at" (click)="markNotificationAsRead(notif.id)" class="btn-small">Mark as Read</button>
+          </div>
+        </div>
+        <p *ngIf="!notifications || notifications.length === 0">
+          No notifications.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

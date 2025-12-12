@@ -1,0 +1,55 @@
+<div class="page-wrapper login">
+  <header>
+    <h2 class="logo">Clearance System</h2>
+  </header>
+
+  <div class="wrapper">
+    <div class="form-box login">
+      <h2>WELCOME</h2>
+      <p style="text-align: center; color: #ccc; font-size: 0.3cm; margin-bottom: 20px;">Student Clearance Management System</p>
+
+      <div *ngIf="errorMessage" style="background: #ff4444; padding: 10px; border-radius: 5px; color: white; margin-bottom: 15px;">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" style="background: #44ff44; padding: 10px; border-radius: 5px; color: black; margin-bottom: 15px;">
+        {{ successMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (submit)="login($event)">
+        <div class="input-box">
+          <span class="icon">📧</span>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            required>
+          <label>Email</label>
+        </div>
+
+        <div class="input-box">
+          <span class="icon">🔒</span>
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            required>
+          <label>Password</label>
+        </div>
+
+        <button type="submit" class="btn" [disabled]="isLoading">
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+
+      </form>
+
+      <div style="text-align: center; margin-top: 20px; color: #ccc; font-size: 0.3cm;">
+        <p>Test Credentials:</p>
+        <p><strong>Admin:</strong> admin@example.com / password123</p>
+        <p><strong>Officer:</strong> officer@example.com / password123</p>
+        <p><strong>Student:</strong> student@example.com / password123</p>
+      </div>
+
+    </div>
+  </div>
+</div>

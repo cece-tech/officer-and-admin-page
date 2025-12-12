@@ -1,0 +1,244 @@
+<div class="dashboard-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>Officer Approval Portal</h2>
+    </div>
+    <div class="navbar-menu">
+      <span class="user-name">{{ currentUser?.full_name }} (Officer)</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-content">
+    <div class="sidebar">
+      <ul class="menu">
+        <li [class.active]="activeTab === 'queue'">
+          <a (click)="selectTab('queue')">
+            <span class="menu-icon">📋</span>
+            Pending Queue
+            <span class="badge">{{ stats.pending }}</span>
+          </a>
+        </li>
+        <li [class.active]="activeTab === 'approved'">
+          <a (click)="selectTab('approved')">
+            <span class="menu-icon">✓</span>
+            Approved
+            <span class="badge success">{{ stats.approved }}</span>
+          </a>
+        </li>
+        <li [class.active]="activeTab === 'rejected'">
+          <a (click)="selectTab('rejected')">
+            <span class="menu-icon">✗</span>
+            Rejected
+            <span class="badge danger">{{ stats.rejected }}</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="stats-summary">
+        <h4>Summary</h4>
+        <div class="stat-item">
+          <span>Total Queue:</span>
+          <strong>{{ stats.total }}</strong>
+        </div>
+        <div class="stat-item">
+          <span>Pending:</span>
+          <strong style="color: #ff9800;">{{ stats.pending }}</strong>
+        </div>
+        <div class="stat-item">
+          <span>Approved:</span>
+          <strong style="color: #4caf50;">{{ stats.approved }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div *ngIf="isLoading" class="loading">
+        <p>Loading...</p>
+      </div>
+
+      <!-- Pending Queue Tab -->
+      <div *ngIf="activeTab === 'queue' && !isLoading" class="tab-content">
+        <h3>Pending Clearance Approvals</h3>
+        <p class="subtitle">These clearances are waiting for your approval</p>
+
+        <div *ngIf="pendingQueue && pendingQueue.length > 0" class="queue-list">
+          <div *ngFor="let item of pendingQueue" class="queue-card">
+            <div class="card-header">
+              <div class="student-info">
+                <h4>{{ item.student_name }}</h4>
+                <p class="student-id">ID: {{ item.student_id }}</p>
+              </div>
+              <span class="status-badge status-pending">{{ item.status }}</span>
+            </div>
+
+            <div class="card-body">
+              <div class="info-row">
+                <span class="label">Section:</span>
+                <span class="value">{{ item.section }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Submitted:</span>
+                <span class="value">{{ item.created_at | date:'short' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Requirement:</span>
+                <span class="value">{{ item.requirement_name || 'Clearance Approval' }}</span>
+              </div>
+
+              <div *ngIf="item.documents && item.documents.length > 0" class="documents">
+                <h5>Documents:</h5>
+                <ul>
+                  <li *ngFor="let doc of item.documents">
+                    <a [href]="doc.url" target="_blank">📄 {{ doc.name }}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <button (click)="openApprovalModal(item)" class="btn-action btn-approve">
+                Review & Decide
+              </button>
+              <button (click)="viewDetails(item)" class="btn-action btn-details">
+                View Details
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!pendingQueue || pendingQueue.length === 0" class="empty-state">
+          <p class="empty-icon">📭</p>
+          <p>No pending clearances in your queue</p>
+          <p class="subtitle">Great job! All clearances have been processed.</p>
+        </div>
+      </div>
+
+      <!-- Approved Tab -->
+      <div *ngIf="activeTab === 'approved' && !isLoading" class="tab-content">
+        <h3>Approved Clearances</h3>
+        <p class="subtitle">Clearances you have approved</p>
+
+        <div *ngIf="completedApprovals && completedApprovals.length > 0" class="queue-list">
+          <div *ngFor="let item of completedApprovals" class="queue-card approved">
+            <div class="card-header">
+              <div class="student-info">
+                <h4>{{ item.student_name }}</h4>
+                <p class="student-id">ID: {{ item.student_id }}</p>
+              </div>
+              <span class="status-badge status-approved">APPROVED</span>
+            </div>
+
+            <div class="card-body">
+              <div class="info-row">
+                <span class="label">Section:</span>
+                <span class="value">{{ item.section }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Approved On:</span>
+                <span class="value">{{ item.approved_at | date:'short' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Status:</span>
+                <span class="value">
+                  <span [style.color]="getStatusColor(item.status)">{{ item.status }}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!completedApprovals || completedApprovals.length === 0" class="empty-state">
+          <p class="empty-icon">📭</p>
+          <p>No approved clearances yet</p>
+        </div>
+      </div>
+
+      <!-- Rejected Tab -->
+      <div *ngIf="activeTab === 'rejected' && !isLoading" class="tab-content">
+        <h3>Rejected Clearances</h3>
+        <p class="subtitle">Clearances you have rejected</p>
+
+        <div *ngIf="rejectedItems && rejectedItems.length > 0" class="queue-list">
+          <div *ngFor="let item of rejectedItems" class="queue-card rejected">
+            <div class="card-header">
+              <div class="student-info">
+                <h4>{{ item.student_name }}</h4>
+                <p class="student-id">ID: {{ item.student_id }}</p>
+              </div>
+              <span class="status-badge status-rejected">REJECTED</span>
+            </div>
+
+            <div class="card-body">
+              <div class="info-row">
+                <span class="label">Section:</span>
+                <span class="value">{{ item.section }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Rejected On:</span>
+                <span class="value">{{ item.rejected_at | date:'short' }}</span>
+              </div>
+              <div *ngIf="item.comments" class="info-row comments">
+                <span class="label">Comments:</span>
+                <span class="value">{{ item.comments }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!rejectedItems || rejectedItems.length === 0" class="empty-state">
+          <p class="empty-icon">📭</p>
+          <p>No rejected clearances</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval Modal -->
+  <div *ngIf="showApprovalModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Clearance Decision</h3>
+        <button (click)="closeApprovalModal()" class="btn-close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div *ngIf="selectedClearance" class="clearance-summary">
+          <h4>{{ selectedClearance.student_name }}</h4>
+          <p class="student-id">ID: {{ selectedClearance.student_id }}</p>
+          <p>Section: {{ selectedClearance.section }}</p>
+          <p>Department: {{ selectedClearance.requirement_name }}</p>
+        </div>
+
+        <form [formGroup]="approvalForm">
+          <div class="form-group">
+            <label>Decision:</label>
+            <select formControlName="status" class="form-control">
+              <option value="APPROVED">✓ Approve</option>
+              <option value="REJECTED">✗ Reject</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Comments/Reason:</label>
+            <textarea
+              formControlName="comments"
+              class="form-control"
+              rows="4"
+              [placeholder]="approvalForm.get('status')?.value === 'REJECTED'
+                ? 'Provide reason for rejection...'
+                : 'Add any comments (optional)...'"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button (click)="closeApprovalModal()" class="btn-secondary">Cancel</button>
+        <button (click)="submitApproval()" class="btn-primary" [disabled]="isLoading">
+          {{ isLoading ? 'Processing...' : 'Submit Decision' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

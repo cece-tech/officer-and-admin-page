@@ -1,0 +1,288 @@
+<div class="dashboard-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>Admin Control Panel</h2>
+    </div>
+    <div class="navbar-menu">
+      <span class="user-name">{{ currentUser?.full_name }} (Admin)</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-content">
+    <div class="sidebar">
+      <ul class="menu">
+        <li [class.active]="activeTab === 'dashboard'">
+          <a (click)="selectTab('dashboard')">
+            <span class="menu-icon">📊</span>
+            Dashboard
+          </a>
+        </li>
+        <li [class.active]="activeTab === 'users'">
+          <a (click)="selectTab('users')">
+            <span class="menu-icon">👥</span>
+            User Management
+          </a>
+        </li>
+        <li [class.active]="activeTab === 'requirements'">
+          <a (click)="selectTab('requirements')">
+            <span class="menu-icon">⚙️</span>
+            Clearance Items
+          </a>
+        </li>
+        <li [class.active]="activeTab === 'logs'">
+          <a (click)="selectTab('logs')">
+            <span class="menu-icon">📝</span>
+            System Logs
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div *ngIf="isLoading" class="loading">
+        <p>Loading...</p>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div *ngIf="activeTab === 'dashboard' && !isLoading" class="tab-content">
+        <h3>System Overview</h3>
+
+        <div class="system-health">
+          <div class="health-indicator" [class]="systemStats.systemHealth.toLowerCase()">
+            <h4>System Health: {{ systemStats.systemHealth }}</h4>
+          </div>
+        </div>
+
+        <div class="stats-grid admin-grid">
+          <div class="stat-card">
+            <h4>Total Users</h4>
+            <p class="stat-number">{{ systemStats.totalUsers }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Students</h4>
+            <p class="stat-number">{{ systemStats.totalStudents }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Officers</h4>
+            <p class="stat-number">{{ systemStats.totalOfficers }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Registrars</h4>
+            <p class="stat-number">{{ systemStats.totalRegistrars }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>Total Clearances</h4>
+            <p class="stat-number">{{ systemStats.totalClearances }}</p>
+          </div>
+          <div class="stat-card">
+            <h4>System Status</h4>
+            <p class="stat-status">✓ Operational</p>
+          </div>
+        </div>
+
+        <div class="recent-activity">
+          <h4>Recent System Activity</h4>
+          <table *ngIf="systemLogs && systemLogs.length > 0">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Action</th>
+                <th>Entity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of systemLogs | slice:0:10">
+                <td>{{ log.user_name }}</td>
+                <td><span class="action-badge">{{ log.action }}</span></td>
+                <td>{{ log.model_type }}</td>
+                <td>{{ log.created_at | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- User Management Tab -->
+      <div *ngIf="activeTab === 'users' && !isLoading" class="tab-content">
+        <div class="section-header">
+          <h3>User Management</h3>
+          <button (click)="openUserForm()" class="btn-primary">+ New User</button>
+        </div>
+
+        <table *ngIf="allUsers && allUsers.length > 0" class="management-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of allUsers">
+              <td>{{ user.full_name }}</td>
+              <td>{{ user.email }}</td>
+              <td><span class="role-badge">{{ user.role }}</span></td>
+              <td>{{ user.department_name || '-' }}</td>
+              <td><span class="status-active">✓ Active</span></td>
+              <td>
+                <button (click)="openUserForm(user)" class="btn-small">Edit</button>
+                <button (click)="deleteUser(user.id)" class="btn-small btn-danger">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="!allUsers || allUsers.length === 0" class="empty-state">
+          <p>No users found</p>
+        </div>
+      </div>
+
+      <!-- Clearance Requirements Tab -->
+      <div *ngIf="activeTab === 'requirements' && !isLoading" class="tab-content">
+        <div class="section-header">
+          <h3>Clearance Requirements</h3>
+          <button (click)="openRequirementForm()" class="btn-primary">+ New Requirement</button>
+        </div>
+
+        <table *ngIf="clearanceRequirements && clearanceRequirements.length > 0" class="management-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Section</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let req of clearanceRequirements">
+              <td>{{ req.name }}</td>
+              <td>{{ req.section }}</td>
+              <td>{{ req.department_name }}</td>
+              <td><span class="status-badge">Active</span></td>
+              <td>
+                <button (click)="openRequirementForm(req)" class="btn-small">Edit</button>
+                <button class="btn-small btn-danger">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="!clearanceRequirements || clearanceRequirements.length === 0" class="empty-state">
+          <p>No requirements defined</p>
+        </div>
+      </div>
+
+      <!-- System Logs Tab -->
+      <div *ngIf="activeTab === 'logs' && !isLoading" class="tab-content">
+        <h3>System Audit Logs</h3>
+
+        <table *ngIf="systemLogs && systemLogs.length > 0" class="audit-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Action</th>
+              <th>Entity Type</th>
+              <th>Entity ID</th>
+              <th>Details</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of systemLogs">
+              <td>{{ log.user_name }}</td>
+              <td><span class="action-badge">{{ log.action }}</span></td>
+              <td>{{ log.model_type }}</td>
+              <td>{{ log.model_id }}</td>
+              <td class="details-col">{{ log.description }}</td>
+              <td>{{ log.created_at | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="!systemLogs || systemLogs.length === 0" class="empty-state">
+          <p>No system logs found</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Form Modal -->
+  <div *ngIf="showUserForm" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>{{ editingUser ? 'Edit User' : 'Create New User' }}</h3>
+        <button (click)="closeUserForm()" class="btn-close">×</button>
+      </div>
+
+      <form [formGroup]="userForm" class="modal-body">
+        <div class="form-group">
+          <label>Full Name:</label>
+          <input type="text" formControlName="name" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Email:</label>
+          <input type="email" formControlName="email" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Role:</label>
+          <select formControlName="role" class="form-control" required>
+            <option value="STUDENT">Student</option>
+            <option value="OFFICER">Officer</option>
+            <option value="REGISTRAR">Registrar</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Department:</label>
+          <input type="text" formControlName="department_id" class="form-control">
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button (click)="closeUserForm()" class="btn-secondary">Cancel</button>
+        <button (click)="saveUser()" class="btn-primary">Save User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Requirement Form Modal -->
+  <div *ngIf="showRequirementForm" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Create Clearance Requirement</h3>
+        <button (click)="closeRequirementForm()" class="btn-close">×</button>
+      </div>
+
+      <form [formGroup]="requirementForm" class="modal-body">
+        <div class="form-group">
+          <label>Requirement Name:</label>
+          <input type="text" formControlName="name" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Section:</label>
+          <input type="text" formControlName="section" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Department:</label>
+          <input type="text" formControlName="department_id" class="form-control" required>
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button (click)="closeRequirementForm()" class="btn-secondary">Cancel</button>
+        <button (click)="saveRequirement()" class="btn-primary">Create Requirement</button>
+      </div>
+    </div>
+  </div>
+</div>
